@@ -13,7 +13,7 @@ const env = process.env.NODE_ENV === 'testing'
   : config.bundle.env
 
 base.entry = {
-  'VueMultiselect': './src/vue-nutrition-label.js'
+  'VueNutritionLabel': './src/vue-nutrition-label.js'
 }
 
 const webpackConfig = merge(base, {
