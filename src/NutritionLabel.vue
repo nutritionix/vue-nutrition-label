@@ -173,7 +173,6 @@ export default {
 
   data () {
     return {
-      serving: this.value.serving,
       rdi: {
         totalFat: 65,
         saturatedFat: 20,
@@ -195,17 +194,17 @@ export default {
 
   methods: {
     modifyServing (num) {
-      if (this.serving === 0.5 && num === -1) { return; }
+      if (this.value.serving === 0.5 && num === -1) { return; }
 
-      if (this.serving === 1 && num === -1) {
+      if (this.value.serving === 1 && num === -1) {
         num = -0.5;
       }
 
-      if (this.serving === 0.5 && num === 1) {
+      if (this.value.serving === 0.5 && num === 1) {
         num = 0.5;
       }
 
-      this.serving += num;
+      this.value.serving += num;
     },
     unitValue (nutrient) {
       return this.value.nutrition[nutrient] * this.serving;
@@ -222,6 +221,9 @@ export default {
           ? this.width
           : this.width + 'px'
       };
+    },
+    serving () {
+      return this.value.serving;
     },
     calories () {
       return this.unitValue('calories');
