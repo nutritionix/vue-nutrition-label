@@ -1,5 +1,5 @@
 <template>
-  <div itemtype="http://schema.org/NutritionInformation" class="nf" :style="{ width: options.width }">
+  <div itemtype="http://schema.org/NutritionInformation" class="nf" :style="{ width: width }">
     <div class="nf-title">
       Nutrition Facts
     </div>
@@ -31,7 +31,7 @@
           v-model="serving">
         <div class="nf-item-name ">
           <div>
-            {{ value.name }}
+            {{ value.name || 'Item name' }}
           </div>
         </div>
       </div>
@@ -40,102 +40,102 @@
     <div class="nf-amount-per-serving">
       Amount per serving
     </div>
-    <div class="nf-calories">
+    <div class="nf-calories" v-if="calories.show">
       <span>Calories</span>
-      <span class="nf-pr" itemprop="calories">{{ calories }}</span>
+      <span class="nf-pr" itemprop="calories">{{ calories.value }}</span>
     </div>
     <div class="nf-bar1"></div>
     <div class="nf-line nf-text-right">
       <span class="nf-highlight nf-percent-dv">% Daily Value*</span>
     </div>
-    <div class="nf-line">
+    <div class="nf-line" v-if="totalFat.show">
       <span class="nf-highlight nf-pr" aria-hidden="true">{{ totalFat.dv }}%</span>
       <span class="nf-highlight">Total Fat</span>
       <span itemprop="fatContent">
         {{ totalFat.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
     </span>
     </div>
-    <div class="nf-line nf-indent">
+    <div class="nf-line nf-indent" v-if="saturatedFat.show">
       <span class="nf-highlight nf-pr" aria-hidden="true">{{ saturatedFat.dv }}%</span>
       <span>Saturated Fat</span>
       <span itemprop="saturatedFatContent">
         {{ saturatedFat.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
       </span>
     </div>
-    <div class="nf-line nf-indent">
+    <div class="nf-line nf-indent" v-if="transFat.show">
       <span><em>Trans</em> Fat</span>
       <span itemprop="transFatContent">
-        {{ transFat }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
+        {{ transFat.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
       </span>
     </div>
-    <div class="nf-line">
+    <div class="nf-line" v-if="cholesterol.show">
       <span class="nf-highlight nf-pr" aria-hidden="true">{{ cholesterol.dv }}%</span>
       <span class="nf-highlight">Cholesterol</span>
       <span itemprop="cholesterolContent">
         {{ cholesterol.value }}<span aria-hidden="true">mg</span><span class="sr-only"> milligrams</span>
       </span>
     </div>
-    <div class="nf-line">
+    <div class="nf-line" v-if="sodium.show">
       <span class="nf-highlight nf-pr" aria-hidden="true">{{ sodium.dv }}%</span>
       <span class="nf-highlight">Sodium</span>
       <span itemprop="cholesterolContent">
         {{ sodium.value }}<span aria-hidden="true">mg</span><span class="sr-only"> milligrams</span>
       </span>
     </div>
-    <div class="nf-line">
+    <div class="nf-line" v-if="totalCarb.show">
       <span class="nf-highlight nf-pr" aria-hidden="true">{{ totalCarb.dv }}%</span>
       <span class="nf-highlight">Total Carbohydrates</span>
       <span itemprop="carbohydrateContent">
         {{ totalCarb.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
       </span>
     </div>
-    <div class="nf-line nf-indent">
+    <div class="nf-line nf-indent" v-if="fiber.show">
       <span class="nf-highlight nf-pr" aria-hidden="true">{{ fiber.dv }}%</span>
       <span>Dietary Fiber</span>
       <span itemprop="fiberContent">
         {{ fiber.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
       </span>
     </div>
-    <div class="nf-line nf-indent">
+    <div class="nf-line nf-indent" v-if="sugars.show">
       <span>Sugars</span>
       <span itemprop="sugarContent">
-        {{ sugars }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
+        {{ sugars.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
       </span>
     </div>
-    <div class="nf-line nf-indent2">
+    <div class="nf-line nf-indent2" v-if="addedSugars.show">
       <span class="nf-highlight nf-pr" aria-hidden="true">{{ addedSugars.dv }}%</span>
       <span>
         Includes
         <span itemprop="">{{ addedSugars.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
         </span>
         Added Sugars
-    </span>
+      </span>
     </div>
-    <div class="nf-line">
+    <div class="nf-line" v-if="protein.show">
       <span class="nf-highlight">Protein</span>
       <span itemprop="proteinContent">
-        {{ protein }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
+        {{ protein.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
       </span>
     </div>
     <div class="nf-bar2"></div>
     <div class="nf-vitamins">
       <div class="nf-vitamins">
-        <div class="nf-vitamin-column">
+        <div class="nf-vitamin-column" v-if="vitaminD.show">
           Vitamin D {{ vitaminD.value }}<span aria-hidden="true">mcg</span>
           <span class="sr-only"> micrograms</span>
           <span class="nf-pr" aria-hidden="true">{{ vitaminD.dv }}%</span>
         </div>
-        <div class="nf-vitamin-column">
+        <div class="nf-vitamin-column" v-if="calcium.show">
           Calcium {{ calcium.value }}<span aria-hidden="true">mg</span>
           <span class="sr-only"> milligrams</span>
           <span class="nf-pr" aria-hidden="true">{{ calcium.dv }}%</span>
         </div>
-        <div class="nf-vitamin-column">
+        <div class="nf-vitamin-column" v-if="iron.show">
           Iron {{ iron.value }}<span aria-hidden="true">mg</span>
           <span class="sr-only"> milligrams</span>
           <span class="nf-pr" aria-hidden="true">{{ iron.dv }}%</span>
         </div>
-        <div class="nf-vitamin-column">
+        <div class="nf-vitamin-column" v-if="potassium.show">
           Potassium {{ potassium.value }}<span aria-hidden="true">mg</span>
           <span class="sr-only"> milligrams</span>
           <span class="nf-pr" aria-hidden="true">{{ potassium.dv }}%</span>
@@ -163,10 +163,10 @@ export default {
         return {};
       }
     },
-    width: {
-      type: String,
+    options: {
+      type: Object,
       default () {
-        return 'auto';
+        return {};
       }
     }
   },
@@ -214,97 +214,123 @@ export default {
       this.serving += num;
     },
     unitValue (nutrient) {
-      return this.value.nutrition[nutrient] * this.serving;
+      if (this.value.hasOwnProperty('nutrition') && this.value.nutrition.hasOwnProperty(nutrient)) {
+        return this.value.nutrition[nutrient] * this.serving;
+      } else {
+        return 0;
+      }
     },
     percentDailyValue (nutrient) {
       return Math.round(this.unitValue(nutrient) / this.rdi[nutrient] * 100);
+    },
+    hasOption (key) {
+      return this.options.hasOwnProperty(key);
     }
   },
 
   computed: {
-    options () {
-      return {
-        width: this.width === 'auto'
-          ? this.width
-          : this.width + 'px'
-      };
+    width () {
+      return this.hasOption('width') ? this.options.width.toString() + 'px' : 'auto';
     },
     calories () {
-      return this.unitValue('calories');
+      return {
+        value: this.unitValue('calories'),
+        show: this.hasOption('calories') ? this.options.calories.show : 1
+      };
     },
     totalFat () {
       return {
         value: this.unitValue('totalFat'),
-        dv: this.percentDailyValue('totalFat')
+        dv: this.percentDailyValue('totalFat'),
+        show: this.hasOption('totalFat') ? this.options.totalFat.show : 1
       };
     },
     saturatedFat () {
       return {
         value: this.unitValue('saturatedFat'),
-        dv: this.percentDailyValue('saturatedFat')
+        dv: this.percentDailyValue('saturatedFat'),
+        show: this.hasOption('saturatedFat') ? this.options.saturatedFat.show : 1
       };
     },
     transFat () {
-      return this.unitValue('transFat');
+      return {
+        value: this.unitValue('transFat'),
+        show: this.hasOption('transFat') ? this.options.transFat.show : 1
+      };
     },
     cholesterol () {
       return {
         value: this.unitValue('cholesterol'),
-        dv: this.percentDailyValue('cholesterol')
+        dv: this.percentDailyValue('cholesterol'),
+        show: this.hasOption('cholesterol') ? this.options.cholesterol.show : 1
       };
     },
     sodium () {
       return {
         value: this.unitValue('sodium'),
-        dv: this.percentDailyValue('sodium')
+        dv: this.percentDailyValue('sodium'),
+        show: this.hasOption('sodium') ? this.options.sodium.show : 1
       };
     },
     totalCarb () {
       return {
         value: this.unitValue('totalCarb'),
-        dv: this.percentDailyValue('totalCarb')
+        dv: this.percentDailyValue('totalCarb'),
+        show: this.hasOption('totalCarb') ? this.options.totalCarb.show : 1
       };
     },
     fiber () {
       return {
         value: this.unitValue('fiber'),
-        dv: this.percentDailyValue('fiber')
+        dv: this.percentDailyValue('fiber'),
+        show: this.hasOption('fiber') ? this.options.fiber.show : 1
       };
     },
     sugars () {
-      return this.unitValue('sugars');
+      return {
+        value: this.unitValue('sugars'),
+        show: this.hasOption('sugars') ? this.options.sugars.show : 1
+      };
     },
     addedSugars () {
       return {
         value: this.unitValue('addedSugars'),
-        dv: this.percentDailyValue('addedSugars')
+        dv: this.percentDailyValue('addedSugars'),
+        show: this.hasOption('addedSugars') ? this.options.addedSugars.show : 1
       };
     },
     protein () {
-      return this.unitValue('protein');
+      return {
+        value: this.unitValue('protein'),
+        show: this.hasOption('protein') ? this.options.protein.show : 1
+      };
     },
     vitaminD () {
       return {
         value: this.unitValue('vitaminD'),
-        dv: this.percentDailyValue('vitaminD')
+        dv: this.percentDailyValue('vitaminD'),
+        show: this.hasOption('vitaminD') ? this.options.vitaminD.show : 1
       };
     },
     calcium () {
       return {
         value: this.unitValue('calcium'),
-        dv: this.percentDailyValue('calcium')
+        dv: this.percentDailyValue('calcium'),
+        show: this.hasOption('calcium') ? this.options.calcium.show : 1
       };
     },
     iron () {
       return {
         value: this.unitValue('iron'),
-        dv: this.percentDailyValue('iron')
+        dv: this.percentDailyValue('iron'),
+        show: this.hasOption('iron') ? this.options.iron.show : 1
       };
     },
     potassium () {
       return {
         value: this.unitValue('potassium'),
-        dv: this.percentDailyValue('potassium')
+        dv: this.percentDailyValue('potassium'),
+        show: this.hasOption('potassium') ? this.options.potassium.show : 1
       };
     }
   }
