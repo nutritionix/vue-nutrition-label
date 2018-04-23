@@ -296,7 +296,7 @@ export default {
       return {
         value: this.unitValue('addedSugars'),
         dv: this.percentDailyValue('addedSugars'),
-        show: this.hasOption('addedSugars') ? this.options.addedSugars.show : 1
+        show: this.hasOption('addedSugars') ? this.options.addedSugars.show : 0
       };
     },
     protein () {
