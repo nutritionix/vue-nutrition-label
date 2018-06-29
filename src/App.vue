@@ -15,6 +15,7 @@ export default {
       // demo
       options: {
         width: 280,
+        hideServingInputField: true,
         addedSugars: {
           show: 1,
           na: 1
@@ -103,6 +104,8 @@ export default {
       item: {
         name: 'Super Cheese Burger',
         serving: 1,
+        servingPerContainer: 0.0,
+        servingUnitName: 'serving',
         ingredientStatement: 'Swiss cheese, American cheese, more cheese and a burger.',
         nutrition: {
           calories: 430,
@@ -124,7 +127,8 @@ export default {
           iron: 1,
           addedSugars: 2,
           potassium: 470,
-          vitaminD: 2
+          vitaminD: 2,
+          servingWeight: 21.2
         }
       }
     };

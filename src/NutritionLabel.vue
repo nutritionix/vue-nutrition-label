@@ -5,8 +5,16 @@
     </div>
     <div class="nf-line">
       <div class="nf-serving">
-        <div>
-          Serving Size: <span itemprop="servingSize">{{ serving }}</span>
+        <div class="nf-serving-per-container" v-show="servingPerContainer !== 0">
+          {{ servingPerContainer }} Serving per container
+        </div>
+        <div class="clear">
+          <span>Serving Size</span>
+          <div itemprop="servingSize" class="nf-serving-size">
+            {{ serving }}
+            {{ servingUnitName || 'serving' }}
+            ({{ servingWeight }}g)
+          </div>
         </div>
         <div class="nf-arrows">
           <div
@@ -174,6 +182,9 @@ export default {
   data () {
     return {
       serving: this.value.serving,
+      servingPerContainer: this.value.servingPerContainer,
+      servingUnitName: this.value.servingUnitName,
+      servingWeight: this.value.nutrition.servingWeight,
       rdi: {
         totalFat: 65,
         saturatedFat: 20,
@@ -362,14 +373,23 @@ export default {
     margin-top: -6px;
   }
 
-  &-per-container {
-    font-size: 1.15em;
-    line-height: normal;
+  &-serving-per-container {
+    font-family: Arial, Helvetica, sans-serif;
+    margin-bottom: 2px;
   }
 
   &-serving {
     font-size: 1.2em;
     line-height: normal;
+    padding: 3px 0;
+    >div>span {
+      float: left;
+    }
+  }
+
+  &-serving-size {
+    margin-left: 105px;
+    text-align: right;
   }
 
   &-amount-per-serving {
@@ -514,5 +534,9 @@ export default {
   overflow: hidden;
   clip: rect(0 0 0 0);
   border: 0;
+}
+
+.pull-right {
+  float: right;
 }
 </style>
