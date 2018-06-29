@@ -5,15 +5,17 @@
     </div>
     <div class="nf-line">
       <div class="nf-serving">
-        <div class="nf-serving-per-container" v-show="servingPerContainer !== 0">
+        <div class="nf-serving-per-container" v-show="servingPerContainer > 0">
           {{ servingPerContainer }} Serving per container
         </div>
         <div class="clear">
           <span>Serving Size</span>
           <div itemprop="servingSize" class="nf-serving-size">
             {{ serving }}
-            {{ servingUnitName || 'serving' }}
-            ({{ servingWeight }}g)
+            {{ servingUnitName }}
+            <template v-show="servingWeight !== 0">
+              ({{ servingWeight }}g)
+            </template>
           </div>
         </div>
         <div class="nf-arrows">
@@ -182,9 +184,6 @@ export default {
   data () {
     return {
       serving: this.value.serving,
-      servingPerContainer: this.value.servingPerContainer,
-      servingUnitName: this.value.servingUnitName,
-      servingWeight: this.value.nutrition.servingWeight,
       rdi: {
         totalFat: 65,
         saturatedFat: 20,
@@ -242,6 +241,12 @@ export default {
   computed: {
     width () {
       return this.hasOption('width') ? this.options.width.toString() + 'px' : 'auto';
+    },
+    servingPerContainer () {
+      return this.value.hasOwnProperty('servingPerContainer') ? this.value.servingPerContainer : 0;
+    },
+    servingUnitName () {
+      return this.value.hasOwnProperty('servingUnitName') ? this.value.servingUnitName : 'serving';
     },
     calories () {
       return {
@@ -343,6 +348,9 @@ export default {
         dv: this.percentDailyValue('potassium'),
         show: this.hasOption('potassium') ? this.options.potassium.show : 1
       };
+    },
+    servingWeight () {
+      return this.unitValue('servingWeight');
     }
   }
 };
