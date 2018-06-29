@@ -224,17 +224,18 @@ export default {
       this.serving += num;
     },
     unitValue (nutrient) {
-      if (this.value.hasOwnProperty('nutrition') && this.value.nutrition.hasOwnProperty(nutrient)) {
-        return this.value.nutrition[nutrient] * this.serving;
-      } else {
-        return 0;
-      }
+      return this.value.hasOwnProperty('nutrition') && this.value.nutrition.hasOwnProperty(nutrient)
+        ? this.roundOff(this.value.nutrition[nutrient] * this.serving)
+        : 0;
     },
     percentDailyValue (nutrient) {
       return Math.round(this.unitValue(nutrient) / this.rdi[nutrient] * 100);
     },
     hasOption (key) {
       return this.options.hasOwnProperty(key);
+    },
+    roundOff (num) {
+      return Math.round(num * 10) / 10;
     }
   },
 

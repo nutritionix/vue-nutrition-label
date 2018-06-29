@@ -109,7 +109,7 @@ export default {
         nutrition: {
           calories: 430,
           fatCalories: 10,
-          totalFat: 5,
+          totalFat: 2.54,
           saturatedFat: 1,
           transFat: 2,
           polyunsaturatedFat: 0.5,
@@ -127,7 +127,7 @@ export default {
           addedSugars: 2,
           potassium: 470,
           vitaminD: 2,
-          servingWeight: 29
+          servingWeight: 29.34
         }
       }
     };
