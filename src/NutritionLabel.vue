@@ -29,7 +29,7 @@
           @keydown="serving.isModified = true"
           data-role="none"
           aria-label="Change the Quantity Textbox"
-          v-model.number="serving.value">
+          v-model.number.lazy="serving.value">
         <div class="nf-item-name ">
           <div>
             {{ serving.unit || 'Serving' }}
@@ -204,7 +204,9 @@ export default {
 
   watch: {
     value () {
+      this.item = JSON.parse(JSON.stringify(this.value));
       this.serving.value = this.value.serving;
+      this.serving.unit = this.value.servingUnitName;
     }
   },
 
@@ -226,15 +228,14 @@ export default {
 
     unitValue (nutrient) {
       let value;
-      let normalVersion = true;
 
       if (this.value.hasOwnProperty('nutrition') && this.value.nutrition.hasOwnProperty(nutrient)) {
         if (this.serving.isModified) {
+          value = this.totalUnitValue(nutrient);
+
           switch (nutrient) {
-            // Calories
             case 'calories':
-              value = this.totalUnitValue(nutrient);
-              value = this.options.useFdaRounding ? this.roundCaloriesRule(value) : value.toFixed(1);
+              value = this.useFdaRounding ? this.roundCaloriesRule(value) : value.toFixed(1);
               break;
 
             // Fats
@@ -243,32 +244,15 @@ export default {
             case 'monounsaturatedFat':
             case 'polyunsaturatedFat':
             case 'saturatedFat':
-              value = this.totalUnitValue(nutrient);
-              value = this.options.useFdaRounding ? this.roundFatsRule(value) : value.toFixed(1);
+              value = this.useFdaRounding ? this.roundFatsRule(value) : value.toFixed(1);
               break;
 
-            // Sodium
             case 'sodium':
-              value = this.totalUnitValue(nutrient);
-              value = this.options.useFdaRounding ? this.roundSodiumRule(value) : value.toFixed(1);
+              value = this.useFdaRounding ? this.roundSodiumRule(value) : value.toFixed(1);
               break;
 
-            // Cholesterol
             case 'cholesterol':
-              value = this.totalUnitValue(nutrient);
-
-              if (this.options.useFdaRounding) {
-                value = this.roundCholesterolRule(value);
-
-                if (!value) {
-                  normalVersion = false;
-                }
-              } else if (normalVersion & value > 0) {
-                value = value.toFixed(1);
-              } else {
-                value = '< 5';
-              }
-
+              value = this.useFdaRounding ? this.roundCholesterolRule(value) : value.toFixed(1);
               break;
 
             // Vitamins and Minerals
@@ -276,9 +260,7 @@ export default {
             case 'calcium':
             case 'iron':
             case 'potassium':
-              value = this.totalUnitValue(nutrient);
-              value = this.options.useFdaRounding ? this.roundVitaminsMineralsRule(value) : value.toFixed(1);
-
+              value = this.useFdaRounding ? this.roundVitaminsMineralsRule(value) : value.toFixed(1);
               break;
 
             // Essentials
@@ -287,23 +269,10 @@ export default {
             case 'sugars':
             case 'addedSugars':
             case 'protein':
-              value = this.totalUnitValue(nutrient);
-
-              if (this.options.useFdaRounding) {
-                value = this.roundEssentialsRule(value);
-
-                if (!value) {
-                  normalVersion = false;
-                }
-              } else if (normalVersion & value > 0) {
-                value = value.toFixed(1);
-              } else {
-                value = '< 1';
-              }
+              value = this.useFdaRounding ? this.roundEssentialsRule(value) : value.toFixed(1);
               break;
 
             case 'servingWeight':
-              value = this.totalUnitValue(nutrient);
               if (this.serving.unit.toLowerCase() === 'gram') {
                 value = this.serving.value;
               }
@@ -317,16 +286,14 @@ export default {
     },
 
     percentDailyValue (nutrient) {
-      let dv = ((this.item.nutrition[nutrient] / this.rdi[nutrient] * 100) / this.item.serving) * this.serving.value;
-      return Math.round(dv);
+      if (this.item.hasOwnProperty('nutrition') && this.item.nutrition.hasOwnProperty(nutrient)) {
+        let dv = ((this.item.nutrition[nutrient] / this.rdi[nutrient] * 100) / this.item.serving) * this.serving.value;
+        return dv.toFixed(0);
+      }
     },
 
     hasOption (key) {
       return this.options.hasOwnProperty(key);
-    },
-
-    roundOff (num) {
-      return Math.round(num / 10) * 10;
     },
 
     byServing (value) {
@@ -338,16 +305,9 @@ export default {
     },
 
     totalUnitValue (nutrient) {
-      let value;
-      if (this.serving.unit === 'serving') {
-        value = this.byServing(this.value.nutrition[nutrient]);
-      } else {
-        if (this.serving.value) {
-          value = this.byWeight(nutrient);
-        }
-      }
-
-      return value;
+      return this.serving.unit.toLowerCase() === 'serving'
+        ? this.byServing(this.value.nutrition[nutrient])
+        : this.byWeight(nutrient);
     },
 
     roundCaloriesRule (value) {
@@ -376,7 +336,7 @@ export default {
       if (value < 2) {
         return 0;
       } else if (value <= 5) {
-        return false;
+        return '< 5';
       }
       // > 5 mg - express to nearest 5 mg increment
       return this.roundToNearestNum(value, 5);
@@ -399,7 +359,7 @@ export default {
         return 0;
       } else if (value < 1) {
         // < 1 g - express as "Contains less than 1g" or "less than 1g"
-        return false;
+        return '< 1';
       }
       // > 1 mg - express to nearest 1 g increment
       return this.roundToNearestNum(value, 1);
@@ -443,6 +403,9 @@ export default {
     },
     servingUnitName () {
       return this.value.hasOwnProperty('servingUnitName') ? this.value.servingUnitName : 'serving';
+    },
+    useFdaRounding () {
+      return this.hasOption('useFdaRounding') ? this.options.useFdaRounding : 0;
     },
     calories () {
       return {
