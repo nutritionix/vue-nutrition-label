@@ -5,31 +5,21 @@
     </div>
     <div class="nf-line">
       <div class="nf-serving">
-        <div class="nf-serving-per-container" v-show="servingPerContainer > 0">
+        <div class="nf-serving-per-container" v-if="servingPerContainer > 0">
           {{ servingPerContainer }} Serving per container
-        </div>
-        <div class="clear">
-          <span>Serving Size</span>
-          <div itemprop="servingSize" class="nf-serving-size">
-            {{ serving }}
-            {{ servingUnitName }}
-            <template v-show="servingWeight !== 0">
-              ({{ servingWeight }}g)
-            </template>
-          </div>
         </div>
         <div class="nf-arrows">
           <div
             class="nf-arrow-up"
             aria-label="Increase the Quantity Arrow"
             rel="nofollow"
-            @click="modifyServing(1)">
+            @click="incrementServing(1)">
           </div>
           <div
             class="nf-arrow-down"
             aria-label="Decrease the Quantity Arrow"
             rel="nofollow"
-            @click="modifyServing(-1)">
+            @click="decrementServing(-1)">
           </div>
         </div>
         <input
@@ -38,10 +28,13 @@
           class="nf-modifier-field"
           data-role="none"
           aria-label="Change the Quantity Textbox"
-          v-model="serving">
+          v-model.number="serving">
         <div class="nf-item-name ">
           <div>
-            {{ value.name || 'Item name' }}
+            {{ servingUnitName || 'Serving' }}
+            <template v-if="servingWeight !== 0">
+              ({{ servingWeight }}g)
+            </template>
           </div>
         </div>
       </div>
@@ -183,7 +176,11 @@ export default {
 
   data () {
     return {
+      item: JSON.parse(JSON.stringify(this.value)),
       serving: this.value.serving,
+      servingUnit: this.value.servingUnitName.toLowerCase(),
+      isServingModified: false,
+      servingAction: 'flat',
       rdi: {
         totalFat: 65,
         saturatedFat: 20,
@@ -222,20 +219,239 @@ export default {
       }
 
       this.serving += num;
+      this.isServingModified = true;
     },
+
+    incrementServing (value) {
+      if (this.serving === 0.5 && value === -1) { return; }
+      if (this.serving === 0.5 && value === 1) {
+        value = 0.5;
+      }
+      this.serving += value;
+      this.isServingModified = true;
+      this.servingAction = 'increased';
+    },
+
+    decrementServing (value) {
+      if (this.serving === 0.5 && value === -1) { return; }
+      if (this.serving === 1 && value === -1) {
+        value = -0.5;
+      }
+      this.serving += value;
+      this.isServingModified = true;
+      this.servingAction = 'decreased';
+    },
+
     unitValue (nutrient) {
-      return this.value.hasOwnProperty('nutrition') && this.value.nutrition.hasOwnProperty(nutrient)
-        ? this.roundOff(this.value.nutrition[nutrient] * this.serving)
-        : 0;
+      let value;
+      let normalVersion = true;
+
+      if (this.value.hasOwnProperty('nutrition') && this.value.nutrition.hasOwnProperty(nutrient)) {
+        if (this.isServingModified) {
+          switch (nutrient) {
+            // Calories
+            case 'calories':
+              value = this.totalUnitValue(nutrient);
+              value = this.options.useFdaRounding ? this.roundCaloriesRule(value) : value.toFixed(1);
+              break;
+
+            // Fats
+            case 'totalFat':
+            case 'transFat':
+            case 'monounsaturatedFat':
+            case 'polyunsaturatedFat':
+            case 'saturatedFat':
+              value = this.totalUnitValue(nutrient);
+              value = this.options.useFdaRounding ? this.roundFatsRule(value) : value.toFixed(1);
+              break;
+
+            // Sodium
+            case 'sodium':
+              value = this.totalUnitValue(nutrient);
+              value = this.options.useFdaRounding ? this.roundSodiumRule(value) : value.toFixed(1);
+              break;
+
+            // Cholesterol
+            case 'cholesterol':
+              value = this.totalUnitValue(nutrient);
+
+              if (this.options.useFdaRounding) {
+                value = this.roundCholesterolRule(value);
+
+                if (!value) {
+                  normalVersion = false;
+                }
+              }
+
+              if (normalVersion & value > 0) {
+                value = value.toFixed(1);
+              } else {
+                value = '< 5';
+              }
+
+              break;
+
+            // Vitamins and Minerals
+            case 'vitaminD':
+            case 'calcium':
+            case 'iron':
+              value = this.totalUnitValue(nutrient);
+
+              if (this.options.useFdaRounding) {
+                value = this.roundVitaminsMineralsRule(value);
+              }
+
+              if (value > 0) {
+                value = value.toFixed(1);
+              }
+
+              break;
+
+            // Essentials
+            case 'totalCarb':
+            case 'fiber':
+            case 'sugars':
+            case 'protein':
+              value = this.totalUnitValue(nutrient);
+
+              if (this.options.useFdaRounding) {
+                value = this.roundEssentialsRule(value);
+
+                if (!value) {
+                  normalVersion = false;
+                }
+              }
+
+              if (normalVersion & value > 0) {
+                value = value.toFixed(1);
+              } else {
+                value = '< 1';
+              }
+              break;
+          }
+          return value;
+        } else {
+          return this.value.nutrition[nutrient];
+        }
+      }
     },
     percentDailyValue (nutrient) {
-      return Math.round(this.unitValue(nutrient) / this.rdi[nutrient] * 100);
+      // return parseFloat(this.unitValue(nutrient) / this.rdi[nutrient] * 100).toFixed(0);
+      return Math.round(this.value.nutrition[nutrient] / this.rdi[nutrient] * 100);
     },
     hasOption (key) {
       return this.options.hasOwnProperty(key);
     },
     roundOff (num) {
-      return Math.round(num * 10) / 10;
+      return Math.round(num / 10) * 10;
+    },
+
+    byServing (value) {
+      return value * this.serving;
+    },
+
+    byWeight (nutrient) {
+      let q = this.servingAction === 'increased'
+        ? this.item.nutrition[nutrient] / this.item.serving
+        : -(this.item.nutrition[nutrient] / this.item.serving);
+      console.log(nutrient + ': ' + q);
+      return (this.value.nutrition[nutrient] += q);
+    },
+
+    totalUnitValue (nutrient) {
+      let value;
+      if (this.servingUnit === 'serving') {
+        value = this.byServing(this.value.nutrition[nutrient]);
+      } else {
+        if (this.serving) {
+          value = this.byWeight(nutrient);
+        }
+      }
+
+      return value;
+    },
+
+    roundCaloriesRule (value) {
+      if (value < 5) {
+        return 0;
+      } else if (value <= 50) {
+        // 50 cal - express to nearest 5 cal increment
+        return this.roundToNearestNum(value, 5);
+      }
+      // > 50 cal - express to nearest 10 cal increment
+      return this.roundToNearestNum(value, 10);
+    },
+
+    roundFatsRule (value) {
+      if (value < 0.5) {
+        return 0;
+      } else if (value < 5) {
+        // < 5 g - express to nearest .5g increment
+        return this.roundToNearestNum(value, 0.5);
+      }
+      // >= 5 g - express to nearest 1 g increment
+      return this.roundToNearestNum(value, 1);
+    },
+
+    roundCholesterolRule (value) {
+      if (value < 2) {
+        return 0;
+      } else if (value <= 5) {
+        return false;
+      }
+      // > 5 mg - express to nearest 5 mg increment
+      return this.roundToNearestNum(value, 5);
+    },
+
+    roundSodiumRule (value) {
+      if (value < 5) {
+        return 0;
+      } else if (value <= 140) {
+        // 5 - 140 mg - express to nearest 5 mg increment
+        return this.roundToNearestNum(value, 5);
+      }
+      // >= 5 g - express to nearest 10 g increment
+      return this.roundToNearestNum(value, 10);
+    },
+
+    // Total Carb, Fiber, Sugar, Sugar Alcohol and Protein
+    roundEssentialsRule (value) {
+      if (value < 0.5) {
+        return 0;
+      } else if (value < 1) {
+        // < 1 g - express as "Contains less than 1g" or "less than 1g"
+        return false;
+      }
+      // > 1 mg - express to nearest 1 g increment
+      return this.roundToNearestNum(value, 1);
+    },
+
+    // Vitamin D, Calcium and Iron
+    roundVitaminsMineralsRule (value) {
+      if (value > 0) {
+        if (value < 10) {
+          // < 10 - round to nearest even number
+          return this.roundToNearestNum(value, 2);
+        } else if (value < 50) {
+          // between 10 and 50, round to the nearest 5 increment
+          return this.roundToNearestNum(value, 5);
+        }
+        // else, round to the nearest 10 increment
+        return this.roundToNearestNum(value, 10);
+      }
+      return 0;
+    },
+
+    roundToNearestNum (value, nearest) {
+      value = this.roundToSpecificDecimalPlace(value, 4);
+      if (nearest < 0) {
+        return Math.round(value * nearest) / nearest;
+      }
+      return Math.round(value / nearest) * nearest;
+    },
+
+    roundToSpecificDecimalPlace (value, decimals) {
+      return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
     }
   },
 
@@ -432,11 +648,11 @@ export default {
   }
 
   &-modifier-field {
-    width: 26px;
+    width: 30px;
     text-align: center;
     line-height: normal;
     border: 1px solid #666;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Arial, Helvetica, sans-serif !important;
     font-size: 1em;
     float: left;
     padding: 2px 0;
@@ -444,10 +660,15 @@ export default {
   }
 
   &-item-name {
-    margin-left: 50px;
-    line-height: 1.25em;
-    padding-top: 6px;
-    padding-bottom: 5px;
+    display: table;
+    margin-left: 56px;
+    padding-top: 2px;
+    min-height: 25px;
+    > div {
+      display: table-cell;
+      vertical-align: middle;
+      min-height: 24px;
+    }
   }
 
   &-serving-unit-qty {

@@ -15,6 +15,7 @@ export default {
       // demo
       options: {
         width: 280,
+        useFdaRounding: 0,
         addedSugars: {
           show: 1,
           na: 1
@@ -36,7 +37,7 @@ export default {
           na: 1
         },
         fiber: {
-          show: 0,
+          show: 1,
           na: 1
         },
         iron: {
@@ -102,32 +103,32 @@ export default {
       },
       item: {
         name: 'Super Cheese Burger',
-        serving: 1,
-        servingPerContainer: 0.0,
-        servingUnitName: 'cup',
+        serving: 175,
+        servingPerContainer: 0,
+        servingUnitName: 'gram',
         ingredientStatement: 'Swiss cheese, American cheese, more cheese and a burger.',
         nutrition: {
-          calories: 430,
-          fatCalories: 10,
-          totalFat: 2.54,
-          saturatedFat: 1,
+          calories: 510,
+          fatCalories: 170,
+          totalFat: 19,
+          saturatedFat: 9,
           transFat: 2,
-          polyunsaturatedFat: 0.5,
-          monounsaturatedFat: 0.5,
-          cholesterol: 20,
-          sodium: 100,
-          totalCarb: 30,
-          fiber: 2,
-          sugars: 1,
-          protein: 3,
+          polyunsaturatedFat: 0,
+          monounsaturatedFat: 0,
+          cholesterol: 10,
+          sodium: 560,
+          totalCarb: 79,
+          fiber: 4,
+          sugars: 35,
+          protein: 9,
           vitaminA: 1,
           vitaminC: 2,
-          calcium: 30,
+          calcium: 35,
           iron: 1,
-          addedSugars: 2,
-          potassium: 470,
-          vitaminD: 2,
-          servingWeight: 29.34
+          addedSugars: 0,
+          potassium: 100,
+          vitaminD: 0,
+          servingWeight: 175
         }
       }
     };
