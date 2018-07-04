@@ -13,25 +13,26 @@
             class="nf-arrow-up"
             aria-label="Increase the Quantity Arrow"
             rel="nofollow"
-            @click="incrementServing(1)">
+            @click="modifyServing(1)">
           </div>
           <div
             class="nf-arrow-down"
             aria-label="Decrease the Quantity Arrow"
             rel="nofollow"
-            @click="decrementServing(-1)">
+            @click="modifyServing(-1)">
           </div>
         </div>
         <input
           type="text"
           value="1"
           class="nf-modifier-field"
+          @keydown="serving.isModified = true"
           data-role="none"
           aria-label="Change the Quantity Textbox"
-          v-model.number="serving">
+          v-model.number="serving.value">
         <div class="nf-item-name ">
           <div>
-            {{ servingUnitName || 'Serving' }}
+            {{ serving.unit || 'Serving' }}
             <template v-if="servingWeight !== 0">
               ({{ servingWeight }}g)
             </template>
@@ -177,10 +178,11 @@ export default {
   data () {
     return {
       item: JSON.parse(JSON.stringify(this.value)),
-      serving: this.value.serving,
-      servingUnit: this.value.servingUnitName.toLowerCase(),
-      isServingModified: false,
-      servingAction: 'flat',
+      serving: {
+        value: this.value.serving,
+        unit: this.value.servingUnitName,
+        isModified: false
+      },
       rdi: {
         totalFat: 65,
         saturatedFat: 20,
@@ -202,44 +204,24 @@ export default {
 
   watch: {
     value () {
-      this.serving = this.value.serving;
+      this.serving.value = this.value.serving;
     }
   },
 
   methods: {
     modifyServing (num) {
-      if (this.serving === 0.5 && num === -1) { return; }
+      if (this.serving.value === 0.5 && num === -1) { return; }
 
-      if (this.serving === 1 && num === -1) {
+      if (this.serving.value === 1 && num === -1) {
         num = -0.5;
       }
 
-      if (this.serving === 0.5 && num === 1) {
+      if (this.serving.value === 0.5 && num === 1) {
         num = 0.5;
       }
 
-      this.serving += num;
-      this.isServingModified = true;
-    },
-
-    incrementServing (value) {
-      if (this.serving === 0.5 && value === -1) { return; }
-      if (this.serving === 0.5 && value === 1) {
-        value = 0.5;
-      }
-      this.serving += value;
-      this.isServingModified = true;
-      this.servingAction = 'increased';
-    },
-
-    decrementServing (value) {
-      if (this.serving === 0.5 && value === -1) { return; }
-      if (this.serving === 1 && value === -1) {
-        value = -0.5;
-      }
-      this.serving += value;
-      this.isServingModified = true;
-      this.servingAction = 'decreased';
+      this.serving.value += num;
+      this.serving.isModified = true;
     },
 
     unitValue (nutrient) {
@@ -247,7 +229,7 @@ export default {
       let normalVersion = true;
 
       if (this.value.hasOwnProperty('nutrition') && this.value.nutrition.hasOwnProperty(nutrient)) {
-        if (this.isServingModified) {
+        if (this.serving.isModified) {
           switch (nutrient) {
             // Calories
             case 'calories':
@@ -281,9 +263,7 @@ export default {
                 if (!value) {
                   normalVersion = false;
                 }
-              }
-
-              if (normalVersion & value > 0) {
+              } else if (normalVersion & value > 0) {
                 value = value.toFixed(1);
               } else {
                 value = '< 5';
@@ -295,15 +275,9 @@ export default {
             case 'vitaminD':
             case 'calcium':
             case 'iron':
+            case 'potassium':
               value = this.totalUnitValue(nutrient);
-
-              if (this.options.useFdaRounding) {
-                value = this.roundVitaminsMineralsRule(value);
-              }
-
-              if (value > 0) {
-                value = value.toFixed(1);
-              }
+              value = this.options.useFdaRounding ? this.roundVitaminsMineralsRule(value) : value.toFixed(1);
 
               break;
 
@@ -311,6 +285,7 @@ export default {
             case 'totalCarb':
             case 'fiber':
             case 'sugars':
+            case 'addedSugars':
             case 'protein':
               value = this.totalUnitValue(nutrient);
 
@@ -320,12 +295,17 @@ export default {
                 if (!value) {
                   normalVersion = false;
                 }
-              }
-
-              if (normalVersion & value > 0) {
+              } else if (normalVersion & value > 0) {
                 value = value.toFixed(1);
               } else {
                 value = '< 1';
+              }
+              break;
+
+            case 'servingWeight':
+              value = this.totalUnitValue(nutrient);
+              if (this.serving.unit.toLowerCase() === 'gram') {
+                value = this.serving.value;
               }
               break;
           }
@@ -335,35 +315,34 @@ export default {
         }
       }
     },
+
     percentDailyValue (nutrient) {
-      // return parseFloat(this.unitValue(nutrient) / this.rdi[nutrient] * 100).toFixed(0);
-      return Math.round(this.value.nutrition[nutrient] / this.rdi[nutrient] * 100);
+      let dv = ((this.item.nutrition[nutrient] / this.rdi[nutrient] * 100) / this.item.serving) * this.serving.value;
+      return Math.round(dv);
     },
+
     hasOption (key) {
       return this.options.hasOwnProperty(key);
     },
+
     roundOff (num) {
       return Math.round(num / 10) * 10;
     },
 
     byServing (value) {
-      return value * this.serving;
+      return value * this.serving.value;
     },
 
     byWeight (nutrient) {
-      let q = this.servingAction === 'increased'
-        ? this.item.nutrition[nutrient] / this.item.serving
-        : -(this.item.nutrition[nutrient] / this.item.serving);
-      console.log(nutrient + ': ' + q);
-      return (this.value.nutrition[nutrient] += q);
+      return this.serving.value * (this.item.nutrition[nutrient] / this.item.serving);
     },
 
     totalUnitValue (nutrient) {
       let value;
-      if (this.servingUnit === 'serving') {
+      if (this.serving.unit === 'serving') {
         value = this.byServing(this.value.nutrition[nutrient]);
       } else {
-        if (this.serving) {
+        if (this.serving.value) {
           value = this.byWeight(nutrient);
         }
       }

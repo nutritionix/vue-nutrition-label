@@ -15,7 +15,7 @@ export default {
       // demo
       options: {
         width: 280,
-        useFdaRounding: 0,
+        useFdaRounding: 1,
         addedSugars: {
           show: 1,
           na: 1
@@ -105,14 +105,14 @@ export default {
         name: 'Super Cheese Burger',
         serving: 175,
         servingPerContainer: 0,
-        servingUnitName: 'gram',
+        servingUnitName: 'Gram',
         ingredientStatement: 'Swiss cheese, American cheese, more cheese and a burger.',
         nutrition: {
           calories: 510,
           fatCalories: 170,
           totalFat: 19,
           saturatedFat: 9,
-          transFat: 2,
+          transFat: 0,
           polyunsaturatedFat: 0,
           monounsaturatedFat: 0,
           cholesterol: 10,
