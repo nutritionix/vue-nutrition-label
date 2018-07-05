@@ -289,63 +289,28 @@ export default {
     },
 
     percentDailyValue (nutrient) {
-      let dv;
+      let unitValue = this.unitValue(nutrient);
+      let dv = (unitValue / this.rdi[nutrient] * 100).toFixed(0);
 
-      if (this.item.hasOwnProperty('nutrition') && this.item.nutrition.hasOwnProperty(nutrient)) {
-        let totalUnitValue = this.totalUnitValue(nutrient);
-        dv = this.totalPercentDailyValue(nutrient);
-
-        if (this.serving.isModified) {
-          if (this.useFdaRounding) {
-            switch (nutrient) {
-              case 'totalFat':
-                // dv = this.roundToNearestNum(this.totalPercentDailyValue(nutrient), 2);
-                break;
-
-              case 'monounsaturatedFat':
-              case 'polyunsaturatedFat':
-              case 'saturatedFat':
-                let num = totalUnitValue <= 5 ? 2.5 : 5;
-                dv = this.roundToNearestNum(this.totalPercentDailyValue(nutrient), num);
-                break;
-
-              case 'cholesterol':
-                if (totalUnitValue < 5) {
-                  dv = 0;
-                }
-                break;
-
-              case 'sodium':
-                dv = this.roundToNearestNum(this.totalPercentDailyValue(nutrient), 1.25);
-                break;
-
-              case 'fiber':
-                if (totalUnitValue < 1) {
-                  dv = 0;
-                } else if (totalUnitValue <= 5) {
-                  dv = this.roundToNearestNum(this.totalPercentDailyValue(nutrient), 4);
-                }
-                break;
-
-              case 'totalCarb':
-              case 'sugars':
-              case 'addedSugars':
-              case 'protein':
-                if (totalUnitValue < 1) {
-                  dv = 0;
-                }
-
-                break;
-            }
+      switch (nutrient) {
+        case 'cholesterol':
+          if (unitValue === '< 5') {
+            dv = 0;
           }
-        }
+          break;
 
-        return Math.round(dv);
+        case 'totalCarb':
+        case 'fiber':
+        case 'sugars':
+        case 'addedSugars':
+        case 'protein':
+          if (unitValue === '< 1') {
+            dv = 0;
+          }
+          break;
       }
-    },
 
-    totalPercentDailyValue (nutrient) {
-      return ((this.item.nutrition[nutrient] / this.rdi[nutrient] * 100) / this.item.serving) * this.serving.value;
+      return dv;
     },
 
     hasOption (key) {
@@ -577,7 +542,7 @@ export default {
       };
     },
     servingWeight () {
-      return this.unitValue('servingWeight');
+      return Math.round(this.unitValue('servingWeight') * 10) / 10;
     }
   }
 };
