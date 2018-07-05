@@ -255,11 +255,14 @@ export default {
               value = this.useFdaRounding ? this.roundCholesterolRule(value) : value.toFixed(1);
               break;
 
+            case 'potassium':
+              value = this.useFdaRounding ? this.roundPotassiumRule(value) : value.toFixed(1);
+              break;
+
             // Vitamins and Minerals
             case 'vitaminD':
             case 'calcium':
             case 'iron':
-            case 'potassium':
               value = this.useFdaRounding ? this.roundVitaminsMineralsRule(value) : value.toFixed(1);
               break;
 
@@ -286,10 +289,63 @@ export default {
     },
 
     percentDailyValue (nutrient) {
+      let dv;
+
       if (this.item.hasOwnProperty('nutrition') && this.item.nutrition.hasOwnProperty(nutrient)) {
-        let dv = ((this.item.nutrition[nutrient] / this.rdi[nutrient] * 100) / this.item.serving) * this.serving.value;
-        return dv.toFixed(0);
+        let totalUnitValue = this.totalUnitValue(nutrient);
+        dv = this.totalPercentDailyValue(nutrient);
+
+        if (this.serving.isModified) {
+          if (this.useFdaRounding) {
+            switch (nutrient) {
+              case 'totalFat':
+                // dv = this.roundToNearestNum(this.totalPercentDailyValue(nutrient), 2);
+                break;
+
+              case 'monounsaturatedFat':
+              case 'polyunsaturatedFat':
+              case 'saturatedFat':
+                let num = totalUnitValue <= 5 ? 2.5 : 5;
+                dv = this.roundToNearestNum(this.totalPercentDailyValue(nutrient), num);
+                break;
+
+              case 'cholesterol':
+                if (totalUnitValue < 5) {
+                  dv = 0;
+                }
+                break;
+
+              case 'sodium':
+                dv = this.roundToNearestNum(this.totalPercentDailyValue(nutrient), 1.25);
+                break;
+
+              case 'fiber':
+                if (totalUnitValue < 1) {
+                  dv = 0;
+                } else if (totalUnitValue <= 5) {
+                  dv = this.roundToNearestNum(this.totalPercentDailyValue(nutrient), 4);
+                }
+                break;
+
+              case 'totalCarb':
+              case 'sugars':
+              case 'addedSugars':
+              case 'protein':
+                if (totalUnitValue < 1) {
+                  dv = 0;
+                }
+
+                break;
+            }
+          }
+        }
+
+        return Math.round(dv);
       }
+    },
+
+    totalPercentDailyValue (nutrient) {
+      return ((this.item.nutrition[nutrient] / this.rdi[nutrient] * 100) / this.item.serving) * this.serving.value;
     },
 
     hasOption (key) {
@@ -351,6 +407,18 @@ export default {
       }
       // >= 5 g - express to nearest 10 g increment
       return this.roundToNearestNum(value, 10);
+    },
+
+    roundPotassiumRule (value) {
+      if (value < 5) {
+        return 0;
+      } else if (value <= 140) {
+      // 5 - 140 mg - express to nearest 5 mg increment
+        return this.roundToNearestNum(value, 5);
+      } else {
+      // >= 5 g - express to nearest 10 g increment
+        return this.roundToNearestNum(value, 10);
+      }
     },
 
     // Total Carb, Fiber, Sugar, Sugar Alcohol and Protein
