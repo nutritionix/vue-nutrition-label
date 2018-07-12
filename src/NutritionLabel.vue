@@ -1,5 +1,5 @@
 <template>
-  <div itemtype="http://schema.org/NutritionInformation" class="nf" :style="{ width: width }">
+  <div itemtype="http://schema.org/NutritionInformation" class="nf" :style="{ width: settings.width }">
     <div class="nf-title">
       Nutrition Facts
     </div>
@@ -8,6 +8,7 @@
         <div class="nf-serving-per-container" v-if="servingPerContainer > 0">
           {{ servingPerContainer }} Serving per container
         </div>
+        <template v-if="!settings.readOnly">
         <div class="nf-arrows">
           <div
             class="nf-arrow-up"
@@ -30,11 +31,21 @@
           data-role="none"
           aria-label="Change the Quantity Textbox"
           v-model.number.lazy="serving.value">
-        <div class="nf-item-name ">
-          <div>
-            {{ serving.unit || 'Serving' }}
+        </template>
+        <div class="nf-item-name" :class="{ 'read-only': settings.readOnly }">
+          <div v-if="!settings.readOnly">
+            {{ servingUnitName }}
             <template v-if="servingWeight !== 0">
               ({{ servingWeight }}g)
+            </template>
+          </div>
+          <div v-if="settings.readOnly">
+            Serving Size:
+            <template v-if="!settings.multipleItems">
+              {{ value.serving }} x {{ itemName }}
+            </template>
+            <template v-if="settings.multipleItems">
+              Multiple items
             </template>
           </div>
         </div>
@@ -151,7 +162,7 @@
       <span>The % Daily Value (DV) tells you how much a nutrient in a serving of food contributes to a daily diet. 2000 calories a day is used for general nutrition advice.</span>
         <div class="nf-ingredient-statement">
           <strong>INGREDIENTS:</strong>
-          {{ value.ingredientStatement || 'None' }}
+          {{ ingredientStatement }}
         </div>
     </div>
   </div>
@@ -177,10 +188,8 @@ export default {
 
   data () {
     return {
-      item: JSON.parse(JSON.stringify(this.value)),
       serving: {
         value: this.value.serving,
-        unit: this.value.servingUnitName,
         isModified: false
       },
       rdi: {
@@ -204,9 +213,7 @@ export default {
 
   watch: {
     value () {
-      this.item = JSON.parse(JSON.stringify(this.value));
       this.serving.value = this.value.serving;
-      this.serving.unit = this.value.servingUnitName;
     }
   },
 
@@ -235,7 +242,7 @@ export default {
 
           switch (nutrient) {
             case 'calories':
-              value = this.useFdaRounding ? this.roundCaloriesRule(value) : value.toFixed(1);
+              value = this.settings.useFdaRounding ? this.roundCaloriesRule(value) : value.toFixed(1);
               break;
 
             // Fats
@@ -244,26 +251,26 @@ export default {
             case 'monounsaturatedFat':
             case 'polyunsaturatedFat':
             case 'saturatedFat':
-              value = this.useFdaRounding ? this.roundFatsRule(value) : value.toFixed(1);
+              value = this.settings.useFdaRounding ? this.roundFatsRule(value) : value.toFixed(1);
               break;
 
             case 'sodium':
-              value = this.useFdaRounding ? this.roundSodiumRule(value) : value.toFixed(1);
+              value = this.settings.useFdaRounding ? this.roundSodiumRule(value) : value.toFixed(1);
               break;
 
             case 'cholesterol':
-              value = this.useFdaRounding ? this.roundCholesterolRule(value) : value.toFixed(1);
+              value = this.settings.useFdaRounding ? this.roundCholesterolRule(value) : value.toFixed(1);
               break;
 
             case 'potassium':
-              value = this.useFdaRounding ? this.roundPotassiumRule(value) : value.toFixed(1);
+              value = this.settings.useFdaRounding ? this.roundPotassiumRule(value) : value.toFixed(1);
               break;
 
             // Vitamins and Minerals
             case 'vitaminD':
             case 'calcium':
             case 'iron':
-              value = this.useFdaRounding ? this.roundVitaminsMineralsRule(value) : value.toFixed(1);
+              value = this.settings.useFdaRounding ? this.roundVitaminsMineralsRule(value) : value.toFixed(1);
               break;
 
             // Essentials
@@ -272,11 +279,11 @@ export default {
             case 'sugars':
             case 'addedSugars':
             case 'protein':
-              value = this.useFdaRounding ? this.roundEssentialsRule(value) : value.toFixed(1);
+              value = this.settings.useFdaRounding ? this.roundEssentialsRule(value) : value.toFixed(1);
               break;
 
             case 'servingWeight':
-              if (this.serving.unit.toLowerCase() === 'gram') {
+              if (this.servingUnitName.toLowerCase() === 'gram') {
                 value = this.serving.value;
               }
               break;
@@ -322,11 +329,11 @@ export default {
     },
 
     byWeight (nutrient) {
-      return this.serving.value * (this.item.nutrition[nutrient] / this.item.serving);
+      return this.serving.value * (this.value.nutrition[nutrient] / this.value.serving);
     },
 
     totalUnitValue (nutrient) {
-      return this.serving.unit.toLowerCase() === 'serving'
+      return this.servingUnitName.toLowerCase() === 'serving'
         ? this.byServing(this.value.nutrition[nutrient])
         : this.byWeight(nutrient);
     },
@@ -428,17 +435,22 @@ export default {
   },
 
   computed: {
-    width () {
-      return this.hasOption('width') ? this.options.width.toString() + 'px' : 'auto';
+    settings () {
+      return {
+        width: this.hasOption('width') ? this.options.width.toString() + 'px' : 'auto',
+        useFdaRounding: this.hasOption('useFdaRounding') ? this.options.useFdaRounding : 0,
+        readOnly: this.hasOption('readOnly') ? this.options.readOnly : false,
+        multipleItems: this.hasOption('multipleItems') ? this.options.multipleItems : false
+      };
+    },
+    itemName () {
+      return this.value.hasOwnProperty('name') ? this.value.name : 'Item';
     },
     servingPerContainer () {
       return this.value.hasOwnProperty('servingPerContainer') ? this.value.servingPerContainer : 0;
     },
     servingUnitName () {
-      return this.value.hasOwnProperty('servingUnitName') ? this.value.servingUnitName : 'serving';
-    },
-    useFdaRounding () {
-      return this.hasOption('useFdaRounding') ? this.options.useFdaRounding : 0;
+      return this.value.hasOwnProperty('servingUnitName') ? this.value.servingUnitName : 'Serving';
     },
     calories () {
       return {
@@ -543,6 +555,9 @@ export default {
     },
     servingWeight () {
       return Math.round(this.unitValue('servingWeight') * 10) / 10;
+    },
+    ingredientStatement () {
+      return this.value.hasOwnProperty('ingredientStatement') ? this.value.ingredientStatement : 'None';
     }
   }
 };
@@ -639,6 +654,9 @@ export default {
     margin-left: 56px;
     padding-top: 2px;
     min-height: 25px;
+    &.read-only {
+      margin-left: 0;
+    }
     > div {
       display: table-cell;
       vertical-align: middle;
