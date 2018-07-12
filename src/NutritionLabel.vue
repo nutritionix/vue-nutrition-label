@@ -162,7 +162,7 @@
       <span>The % Daily Value (DV) tells you how much a nutrient in a serving of food contributes to a daily diet. 2000 calories a day is used for general nutrition advice.</span>
         <div class="nf-ingredient-statement">
           <strong>INGREDIENTS:</strong>
-          {{ ingredientStatement }}
+          <div v-html="ingredientStatement"></div>
         </div>
     </div>
   </div>
