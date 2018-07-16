@@ -25,7 +25,6 @@
         </div>
         <input
           type="text"
-          value="1"
           class="nf-modifier-field"
           @keydown="serving.isModified = true"
           data-role="none"
@@ -213,6 +212,7 @@ export default {
 
   watch: {
     value () {
+      this.isLoaded = true;
       this.serving.value = this.value.serving;
     }
   },
@@ -234,63 +234,62 @@ export default {
     },
 
     unitValue (nutrient) {
-      let value;
-
       if (this.value.hasOwnProperty('nutrition') && this.value.nutrition.hasOwnProperty(nutrient)) {
-        if (this.serving.isModified) {
-          value = this.totalUnitValue(nutrient);
+        let value = this.value.nutrition[nutrient];
 
-          switch (nutrient) {
-            case 'calories':
-              value = this.settings.useFdaRounding ? this.roundCaloriesRule(value) : value.toFixed(1);
-              break;
+        switch (nutrient) {
+          case 'calories':
+            return this.servingUnitName.toLowerCase() === 'serving'
+              ? this.byServing(this.roundCalories(value))
+              : this.roundCalories(this.byWeight(value));
 
-            // Fats
-            case 'totalFat':
-            case 'transFat':
-            case 'monounsaturatedFat':
-            case 'polyunsaturatedFat':
-            case 'saturatedFat':
-              value = this.settings.useFdaRounding ? this.roundFatsRule(value) : value.toFixed(1);
-              break;
+          // Fats
+          case 'totalFat':
+          case 'transFat':
+          case 'monounsaturatedFat':
+          case 'polyunsaturatedFat':
+          case 'saturatedFat':
+            return this.servingUnitName.toLowerCase() === 'serving'
+              ? this.byServing(this.roundFats(value))
+              : this.roundFats(this.byWeight(value));
 
-            case 'sodium':
-              value = this.settings.useFdaRounding ? this.roundSodiumRule(value) : value.toFixed(1);
-              break;
+          case 'sodium':
+            return this.servingUnitName.toLowerCase() === 'serving'
+              ? this.byServing(this.roundSodium(value))
+              : this.roundSodium(this.byWeight(value));
 
-            case 'cholesterol':
-              value = this.settings.useFdaRounding ? this.roundCholesterolRule(value) : value.toFixed(1);
-              break;
+          case 'cholesterol':
+            return this.servingUnitName.toLowerCase() === 'serving'
+              ? this.byServing(this.roundCholesterol(value))
+              : this.roundCholesterol(this.byWeight(value));
 
-            case 'potassium':
-              value = this.settings.useFdaRounding ? this.roundPotassiumRule(value) : value.toFixed(1);
-              break;
+          case 'potassium':
+            return this.servingUnitName.toLowerCase() === 'serving'
+              ? this.byServing(this.roundPotassium(value))
+              : this.roundPotassium(this.byWeight(value));
 
-            // Vitamins and Minerals
-            case 'vitaminD':
-            case 'calcium':
-            case 'iron':
-              value = this.settings.useFdaRounding ? this.roundVitaminsMineralsRule(value) : value.toFixed(1);
-              break;
+          // Vitamins and Minerals
+          case 'vitaminD':
+          case 'calcium':
+          case 'iron':
+            return this.servingUnitName.toLowerCase() === 'serving'
+              ? this.byServing(this.roundVitaminsMinerals(value))
+              : this.roundVitaminsMinerals(this.byWeight(value));
 
-            // Essentials
-            case 'totalCarb':
-            case 'fiber':
-            case 'sugars':
-            case 'addedSugars':
-            case 'protein':
-              value = this.settings.useFdaRounding ? this.roundEssentialsRule(value) : value.toFixed(1);
-              break;
+          // Essentials
+          case 'totalCarb':
+          case 'fiber':
+          case 'sugars':
+          case 'addedSugars':
+          case 'protein':
+            return this.servingUnitName.toLowerCase() === 'serving'
+              ? this.byServing(this.roundEssentials(value))
+              : this.roundEssentials(this.byWeight(value));
 
-            case 'servingWeight':
-              if (this.servingUnitName.toLowerCase() === 'gram') {
-                value = this.serving.value;
-              }
-              break;
-          }
-          return value;
-        } else {
-          return this.value.nutrition[nutrient];
+          case 'servingWeight':
+            return this.servingUnitName.toLowerCase() === 'serving'
+              ? this.byServing(value)
+              : this.serving.value;
         }
       }
     },
@@ -325,20 +324,26 @@ export default {
     },
 
     byServing (value) {
+      if (!this.serving.isModified) {
+        return value;
+      }
+
       return value * this.serving.value;
     },
 
-    byWeight (nutrient) {
-      return this.serving.value * (this.value.nutrition[nutrient] / this.value.serving);
+    byWeight (value) {
+      if (!this.serving.isModified) {
+        return value;
+      }
+
+      return this.serving.value * (value / this.value.serving);
     },
 
-    totalUnitValue (nutrient) {
-      return this.servingUnitName.toLowerCase() === 'serving'
-        ? this.byServing(this.value.nutrition[nutrient])
-        : this.byWeight(nutrient);
-    },
+    roundCalories (value) {
+      if (!this.settings.useFdaRounding) {
+        return value.toFixed(0);
+      }
 
-    roundCaloriesRule (value) {
       if (value < 5) {
         return 0;
       } else if (value <= 50) {
@@ -349,7 +354,11 @@ export default {
       return this.roundToNearestNum(value, 10);
     },
 
-    roundFatsRule (value) {
+    roundFats (value) {
+      if (!this.settings.useFdaRounding) {
+        return value.toFixed(0);
+      }
+
       if (value < 0.5) {
         return 0;
       } else if (value < 5) {
@@ -360,7 +369,11 @@ export default {
       return this.roundToNearestNum(value, 1);
     },
 
-    roundCholesterolRule (value) {
+    roundCholesterol (value) {
+      if (!this.settings.useFdaRounding) {
+        return value.toFixed(0);
+      }
+
       if (value < 2) {
         return 0;
       } else if (value <= 5) {
@@ -370,7 +383,11 @@ export default {
       return this.roundToNearestNum(value, 5);
     },
 
-    roundSodiumRule (value) {
+    roundSodium (value) {
+      if (!this.settings.useFdaRounding) {
+        return value.toFixed(0);
+      }
+
       if (value < 5) {
         return 0;
       } else if (value <= 140) {
@@ -381,7 +398,11 @@ export default {
       return this.roundToNearestNum(value, 10);
     },
 
-    roundPotassiumRule (value) {
+    roundPotassium (value) {
+      if (!this.settings.useFdaRounding) {
+        return value.toFixed(0);
+      }
+
       if (value < 5) {
         return 0;
       } else if (value <= 140) {
@@ -394,7 +415,11 @@ export default {
     },
 
     // Total Carb, Fiber, Sugar, Sugar Alcohol and Protein
-    roundEssentialsRule (value) {
+    roundEssentials (value) {
+      if (!this.settings.useFdaRounding) {
+        return value.toFixed(0);
+      }
+
       if (value < 0.5) {
         return 0;
       } else if (value < 1) {
@@ -406,7 +431,11 @@ export default {
     },
 
     // Vitamin D, Calcium and Iron
-    roundVitaminsMineralsRule (value) {
+    roundVitaminsMinerals (value) {
+      if (!this.settings.useFdaRounding) {
+        return value.toFixed(0);
+      }
+
       if (value > 0) {
         if (value < 10) {
           // < 10 - round to nearest even number
@@ -422,6 +451,10 @@ export default {
     },
 
     roundToNearestNum (value, nearest) {
+      if (!this.settings.useFdaRounding) {
+        return value.toFixed(0);
+      }
+
       value = this.roundToSpecificDecimalPlace(value, 4);
       if (nearest < 0) {
         return Math.round(value * nearest) / nearest;
@@ -437,10 +470,18 @@ export default {
   computed: {
     settings () {
       return {
-        width: this.hasOption('width') ? this.options.width.toString() + 'px' : 'auto',
-        useFdaRounding: this.hasOption('useFdaRounding') ? this.options.useFdaRounding : 0,
-        readOnly: this.hasOption('readOnly') ? this.options.readOnly : false,
-        multipleItems: this.hasOption('multipleItems') ? this.options.multipleItems : false
+        width: this.hasOption('width')
+          ? this.options.width.toString() + 'px'
+          : 'auto',
+        useFdaRounding: this.hasOption('useFdaRounding')
+          ? this.options.useFdaRounding
+          : 0,
+        readOnly: this.hasOption('readOnly')
+          ? this.options.readOnly
+          : false,
+        multipleItems: this.hasOption('multipleItems')
+          ? this.options.multipleItems
+          : false
       };
     },
     itemName () {
@@ -554,7 +595,7 @@ export default {
       };
     },
     servingWeight () {
-      return Math.round(this.unitValue('servingWeight') * 10) / 10;
+      return this.unitValue('servingWeight');
     },
     ingredientStatement () {
       return this.value.hasOwnProperty('ingredientStatement') ? this.value.ingredientStatement : 'None';
