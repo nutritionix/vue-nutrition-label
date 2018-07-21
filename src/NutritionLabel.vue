@@ -239,9 +239,7 @@ export default {
 
         switch (nutrient) {
           case 'calories':
-            return this.servingUnitName.toLowerCase() === 'serving'
-              ? this.byServing(this.roundCalories(value))
-              : this.roundCalories(this.byWeight(value));
+            return this.roundCalories(this.multiplier(value));
 
           // Fats
           case 'totalFat':
@@ -249,32 +247,22 @@ export default {
           case 'monounsaturatedFat':
           case 'polyunsaturatedFat':
           case 'saturatedFat':
-            return this.servingUnitName.toLowerCase() === 'serving'
-              ? this.byServing(this.roundFats(value))
-              : this.roundFats(this.byWeight(value));
+            return this.roundFats(this.multiplier(value));
 
           case 'sodium':
-            return this.servingUnitName.toLowerCase() === 'serving'
-              ? this.byServing(this.roundSodium(value))
-              : this.roundSodium(this.byWeight(value));
+            return this.roundSodium(this.multiplier(value));
 
           case 'cholesterol':
-            return this.servingUnitName.toLowerCase() === 'serving'
-              ? this.byServing(this.roundCholesterol(value))
-              : this.roundCholesterol(this.byWeight(value));
+            return this.roundCholesterol(this.multiplier(value));
 
           case 'potassium':
-            return this.servingUnitName.toLowerCase() === 'serving'
-              ? this.byServing(this.roundPotassium(value))
-              : this.roundPotassium(this.byWeight(value));
+            return this.roundPotassium(this.multiplier(value));
 
           // Vitamins and Minerals
           case 'vitaminD':
           case 'calcium':
           case 'iron':
-            return this.servingUnitName.toLowerCase() === 'serving'
-              ? this.byServing(this.roundVitaminsMinerals(value))
-              : this.roundVitaminsMinerals(this.byWeight(value));
+            return this.roundVitaminsMinerals(this.multiplier(value));
 
           // Essentials
           case 'totalCarb':
@@ -282,9 +270,7 @@ export default {
           case 'sugars':
           case 'addedSugars':
           case 'protein':
-            return this.servingUnitName.toLowerCase() === 'serving'
-              ? this.byServing(this.roundEssentials(value))
-              : this.roundEssentials(this.byWeight(value));
+            return this.roundEssentials(this.multiplier(value));
 
           case 'servingWeight':
             return this.servingUnitName.toLowerCase() === 'serving'
@@ -292,6 +278,12 @@ export default {
               : this.serving.value;
         }
       }
+    },
+
+    multiplier (value) {
+      return this.servingUnitName.toLowerCase() === 'serving'
+        ? this.byServing(value)
+        : this.byWeight(value);
     },
 
     percentDailyValue (nutrient) {
