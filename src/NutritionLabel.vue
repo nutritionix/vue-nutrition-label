@@ -256,12 +256,14 @@ export default {
             return this.roundCholesterol(this.multiplier(value));
 
           case 'potassium':
+            value = value / 100 * this.rdi[nutrient];
             return this.roundPotassium(this.multiplier(value));
 
           // Vitamins and Minerals
           case 'vitaminD':
           case 'calcium':
           case 'iron':
+            value = value / 100 * this.rdi[nutrient];
             return this.roundVitaminsMinerals(this.multiplier(value));
 
           // Essentials
@@ -274,8 +276,8 @@ export default {
 
           case 'servingWeight':
             return this.servingUnitName.toLowerCase() === 'serving'
-              ? this.byServing(value)
-              : this.serving.value;
+              ? this.byServing(value).toFixed(0)
+              : this.serving.value.toFixed(0);
         }
       }
     },
