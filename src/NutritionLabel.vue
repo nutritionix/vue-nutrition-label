@@ -9,23 +9,11 @@
           {{ servingPerContainer }} Serving per container
         </div>
         <template v-if="!settings.readOnly">
-        <div class="nf-arrows">
-          <div
-            class="nf-arrow-up"
-            aria-label="Increase the Quantity Arrow"
-            rel="nofollow"
-            @click="modifyServing(1)">
-          </div>
-          <div
-            class="nf-arrow-down"
-            aria-label="Decrease the Quantity Arrow"
-            rel="nofollow"
-            @click="modifyServing(-1)">
-          </div>
-        </div>
         <input
           type="text"
           class="nf-modifier-field"
+          id="serving"
+          @click="selectAll()"
           @keydown="serving.isModified = true"
           data-role="none"
           aria-label="Change the Quantity Textbox"
@@ -458,6 +446,12 @@ export default {
 
     roundToSpecificDecimalPlace (value, decimals) {
       return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
+    },
+
+    selectAll () {
+      let el = document.querySelector('#serving');
+      el.select();
+      el.setSelectionRange(0, 9999);
     }
   },
 
@@ -686,7 +680,7 @@ export default {
 
   &-item-name {
     display: table;
-    margin-left: 56px;
+    margin-left: 42px;
     padding-top: 2px;
     min-height: 25px;
     &.read-only {
