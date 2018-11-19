@@ -479,7 +479,7 @@ export default {
       return this.value.hasOwnProperty('servingPerContainer') ? this.value.servingPerContainer : 0;
     },
     servingUnitName () {
-      return this.value.hasOwnProperty('servingUnitName') ? this.value.servingUnitName : 'Serving';
+      return this.value.hasOwnProperty('servingUnitName') && this.value.servingUnitName !== '' ? this.value.servingUnitName : 'Serving';
     },
     calories () {
       return {
