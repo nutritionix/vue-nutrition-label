@@ -263,17 +263,17 @@ export default {
             return this.roundEssentials(this.multiplier(value));
 
           case 'servingWeight':
-            return this.servingUnitName.toLowerCase() === 'gram'
-              ? this.serving.value.toFixed(0)
-              : this.byServing(value).toFixed(0);
+            return this.servingUnitName.toLowerCase() === 'serving'
+              ? this.byServing(value).toFixed(0)
+              : this.byWeight(value).toFixed(0);
         }
       }
     },
 
     multiplier (value) {
-      return this.servingUnitName.toLowerCase() === 'gram'
-        ? this.byWeight(value)
-        : this.byServing(value);
+      return this.servingUnitName.toLowerCase() === 'serving'
+        ? this.byServing(value)
+        : this.byWeight(value);
     },
 
     percentDailyValue (nutrient) {
