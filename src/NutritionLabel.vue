@@ -122,6 +122,16 @@
     <div class="nf-bar2"></div>
     <div class="nf-vitamins">
       <div class="nf-vitamins">
+        <div class="nf-vitamin-column" v-if="vitaminA.show">
+          Vitamin A {{ vitaminA.value }}<span aria-hidden="true">IU</span>
+          <span class="sr-only"> International Unit</span>
+          <span class="nf-pr" aria-hidden="true">{{ vitaminA.dv }}%</span>
+        </div>
+        <div class="nf-vitamin-column" v-if="vitaminC.show">
+          Vitamin C {{ vitaminC.value }}<span aria-hidden="true">mg</span>
+          <span class="sr-only"> milligrams</span>
+          <span class="nf-pr" aria-hidden="true">{{ vitaminC.dv }}%</span>
+        </div>
         <div class="nf-vitamin-column" v-if="vitaminD.show">
           Vitamin D {{ vitaminD.value }}<span aria-hidden="true">mcg</span>
           <span class="sr-only"> micrograms</span>
@@ -248,6 +258,8 @@ export default {
             return this.roundPotassium(this.multiplier(value));
 
           // Vitamins and Minerals
+          case 'vitaminA':
+          case 'vitaminC':
           case 'vitaminD':
           case 'calcium':
           case 'iron':
@@ -552,6 +564,20 @@ export default {
       return {
         value: this.unitValue('protein'),
         show: this.hasOption('protein') ? this.options.protein.show : 1
+      };
+    },
+    vitaminA () {
+      return {
+        value: this.unitValue('vitaminA'),
+        dv: this.percentDailyValue('vitaminA'),
+        show: this.hasOption('vitaminA') ? this.options.vitaminA.show : 0
+      };
+    },
+    vitaminC () {
+      return {
+        value: this.unitValue('vitaminC'),
+        dv: this.percentDailyValue('vitaminC'),
+        show: this.hasOption('vitaminC') ? this.options.vitaminC.show : 0
       };
     },
     vitaminD () {
