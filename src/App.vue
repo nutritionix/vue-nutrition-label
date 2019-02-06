@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id='app'>
     <h1>
       Vue Nutrition Label
     </h1>
@@ -18,6 +18,38 @@ export default {
         useFdaRounding: 1,
         readOnly: false,
         multipleItems: false,
+        locale: {
+          nutritionFacts: 'Nutrition Facts',
+          dailyValues: 'Daily Value',
+          servingSize: 'Serving Size:',
+          servingsPerContainer: 'Servings Per Container:',
+          amountPerServing: 'Amount Per Serving',
+          calories: 'Calories',
+          fatCalories: 'Calories from Fat',
+          totalFat: 'Total Fat',
+          satFat: 'Saturated Fat',
+          transFat: '<em>Trans<em> Fat',
+          polyFat: 'Polyunsaturated Fat',
+          monoFat: 'Monounsaturated Fat',
+          cholesterol: 'Cholesterol',
+          sodium: 'Sodium',
+          potassium: 'Potassium',
+          totalCarb: 'Total Carbohydrates',
+          fiber: 'Dietary Fiber',
+          sugars: 'Sugars',
+          protein: 'Protein',
+          vitaminA: 'Vitamin A',
+          vitaminC: 'Vitamin C',
+          calcium: 'Calcium',
+          iron: 'Iron',
+          includes: 'Includes',
+          addedSugars: 'Added Sugars',
+          vitaminD: 'Vitamin D',
+          ingredients: 'Ingredients',
+          disclaimer: 'Disclaimer',
+          viewAllIngredients: 'View All Ingredients',
+          multipleItems: 'Multiple Items'
+        },
         addedSugars: {
           show: 1,
           na: 1
