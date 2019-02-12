@@ -2,6 +2,8 @@
 
 > A VueJS component to create a 2018 FDA-style nutrition label
 
+View [Demo](https://nutritionix.github.io/vue-nutrition-label/demo/)
+
 ## Installation
 ### via npm
 
