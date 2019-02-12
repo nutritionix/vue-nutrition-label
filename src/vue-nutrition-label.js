@@ -5,3 +5,7 @@ export default {
     Vue.component('nutrition-label', NutritionLabel);
   }
 };
+
+export {
+  NutritionLabel
+};
