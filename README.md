@@ -13,7 +13,7 @@ npm install vue-nutrition-label --save
 
 ### via CDN
 ``` html
-<script src="https://cdn.jsdelivr.net/npm/vue-nutrition-label/dist/vue-nutritioan-label.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-nutrition-label/dist/vue-nutrition-label.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/vue-nutrition-label/dist/vue-nutrition-label.min.css" rel="stylesheet" type="text/css">
 ```
 
