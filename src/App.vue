@@ -3,7 +3,102 @@
     <h1>
       Vue Nutrition Label
     </h1>
-    <nutrition-label :options="options" v-model="item"></nutrition-label>
+    <div class="wrap">
+      <div class="col1">
+        <form>
+          <p>
+            <label>Serving Weight</label>
+            <input type="number" v-model="n.servingWeight">
+          </p>
+          <p v-if="options.calories.show">
+            <label>Calories</label>
+            <input type="number" v-model="n.calories">
+          </p>
+          <p v-if="options.fatCalories.show">
+            <label>Calories from Fat</label>
+            <input type="number" v-model="n.fatCalories">
+          </p>
+          <p v-if="options.totalFat.show">
+            <label>Total Fat</label>
+            <input type="number" v-model="n.totalFat">
+          </p>
+          <p v-if="options.saturatedFat.show">
+            <label>Saturated Fat</label>
+            <input type="number" v-model="n.saturatedFat">
+          </p>
+          <p v-if="options.transFat.show">
+            <label>Trans Fat</label>
+            <input type="number" v-model="n.transFat">
+          </p>
+          <p v-if="options.polyunsaturatedFat.show">
+            <label>Polyunsaturated Fat</label>
+            <input type="number" v-model="n.polyunsaturatedFat">
+          </p>
+          <p v-if="options.monounsaturatedFat.show">
+            <label>Monounsaturated Fat</label>
+            <input type="number" v-model="n.monounsaturatedFat">
+          </p>
+          <p v-if="options.cholesterol.show">
+            <label>Cholesterol</label>
+            <input type="number" v-model="n.cholesterol">
+          </p>
+          <p v-if="options.sodium.show">
+            <label>Sodium</label>
+            <input type="number" v-model="n.sodium">
+          </p>
+          <p v-if="options.totalCarb.show">
+            <label>Carbohydrate</label>
+            <input type="number" v-model="n.totalCarb">
+          </p>
+          <p v-if="options.fiber.show">
+            <label>Fiber</label>
+            <input type="number" v-model="n.fiber">
+          </p>
+          <p v-if="options.sugars.show">
+            <label>Sugars</label>
+            <input type="number" v-model="n.sugars">
+          </p>
+          <p v-if="options.addedSugars.show">
+            <label>Added Sugars</label>
+            <input type="number" v-model="n.addedSugars">
+          </p>
+          <p v-if="options.protein.show">
+            <label>Protein</label>
+            <input type="number" v-model="n.protein">
+          </p>
+          <p v-if="options.vitaminA.show">
+            <label>Vitamin A</label>
+            <input type="number" v-model="n.vitaminA">
+          </p>
+          <p v-if="options.vitaminC.show">
+            <label>Vitamin C</label>
+            <input type="number" v-model="n.vitaminC">
+          </p>
+          <p v-if="options.vitaminD.show">
+            <label>Vitamin D</label>
+            <input type="number" v-model="n.vitaminD">
+          </p>
+          <p v-if="options.calcium.show">
+            <label>Calcium</label>
+            <input type="number" v-model="n.calcium">
+          </p>
+          <p v-if="options.iron.show">
+            <label>Iron</label>
+            <input type="number" v-model="n.iron">
+          </p>
+          <p v-if="options.potassium.show">
+            <label>Potassium</label>
+            <input type="number" v-model="n.potassium">
+          </p>
+        </form>
+      </div>
+      <div class="col2">
+        <nutrition-label :options="options" v-model="item"></nutrition-label>
+      </div>
+      <div class="col3">
+        <nutrition-label :options="ukOptions" v-model="item"></nutrition-label>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -18,6 +113,7 @@ export default {
         useFdaRounding: 1,
         readOnly: false,
         multipleItems: false,
+        layout: 'US',
         locale: {
           nutritionFacts: 'Nutrition Facts',
           dailyValues: 'Daily Value',
@@ -67,7 +163,7 @@ export default {
           na: 1
         },
         fatCalories: {
-          show: 1,
+          show: 0,
           na: 1
         },
         fiber: {
@@ -142,19 +238,19 @@ export default {
         servingUnitName: 'serving',
         ingredientStatement: 'Swiss cheese, American cheese, more cheese and a burger.',
         nutrition: {
-          calories: 510,
+          calories: 523.1247,
           fatCalories: 170,
-          totalFat: 19,
-          saturatedFat: 9,
+          totalFat: 48.5941,
+          saturatedFat: 69.3748,
           transFat: 0,
           polyunsaturatedFat: 0,
           monounsaturatedFat: 0,
           cholesterol: 10,
-          sodium: 560,
-          totalCarb: 79,
-          fiber: 4,
-          sugars: 35,
-          protein: 9,
+          sodium: 780.2844,
+          totalCarb: 7.5555,
+          fiber: 15.1524,
+          sugars: 22.6127,
+          protein: 38.9961,
           vitaminA: 1,
           vitaminC: 2,
           calcium: 35,
@@ -162,19 +258,71 @@ export default {
           addedSugars: 0,
           potassium: 100,
           vitaminD: 0,
-          servingWeight: 175
+          servingWeight: 200
         }
       }
     };
+  },
+  computed: {
+    ukOptions () {
+      let options = JSON.parse(JSON.stringify(this.options));
+      options.width = 380;
+      options.layout = 'UK';
+      options.locale.nutritionFacts = 'Nutrition';
+      return options;
+    },
+    n () {
+      return this.item.nutrition;
+    }
   }
 };
 </script>
 <style>
   #app {
-    text-align: center;
     font-family: Arial, Helvetica, sans-serif;
+  }
+  h1 {
+    text-align: center;
   }
   .nf {
     margin: 0 auto;
   }
+  form, form * {
+    font-size: 12px;
+  }
+  form label {
+    display: block;
+    float: left;
+    width: 130px;
+    padding: 5px 10px 0 0;
+    text-align: right;
+  }
+  form input {
+    background-color: #f0f0f0;
+    border: none;
+    padding: 4px 6px;
+    width: 80px;
+  }
+  form p {
+    margin: 0 0 4px 0;
+    padding: 0;
+  }
+  .wrap {
+    clear: both;
+    margin: 0 auto;
+    width: 1000px;
+  }
+  .col1, .col2, .col3 {
+    float: left;
+  }
+  .col1 {
+    width: 260px;
+  }
+  .col2 {
+    width: 340px;
+  }
+  .col3 {
+    width: 400px
+  }
+
 </style>

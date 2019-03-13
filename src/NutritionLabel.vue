@@ -1,167 +1,272 @@
 <template>
-  <div itemtype="http://schema.org/NutritionInformation" class="nf" :style="{ width: settings.width }">
-    <div class="nf-title" v-html="text.nutritionFacts || 'Nutrition Facts'">
-    </div>
-    <div class="nf-line">
-      <div class="nf-serving">
-        <div class="nf-serving-per-container" v-if="servingPerContainer > 0">
-          {{ servingPerContainer }} <span v-html="text.servingsPerContainer || 'Serving per container'"></span>
-        </div>
-        <template v-if="!settings.readOnly">
-        <input
-          type="text"
-          class="nf-modifier-field"
-          id="serving"
-          @click="selectAll()"
-          @keydown="serving.isModified = true"
-          data-role="none"
-          aria-label="Change the Quantity Textbox"
-          v-model.number.lazy="serving.value">
-        </template>
-        <div class="nf-item-name" :class="{ 'read-only': settings.readOnly }">
-          <div v-if="!settings.readOnly">
-            {{ servingUnitName }}
-            <template v-if="servingWeight !== 0">
-              ({{ servingWeight }}g)
-            </template>
+  <div itemtype="http://schema.org/NutritionInformation"
+    class="nf"
+    :class="{ uk: settings.layout.toLowerCase() === 'uk', us: settings.layout.toLowerCase() !== 'uk' }"
+    :style="{ width: settings.width }">
+    <!-- US -->
+    <template v-if="settings.layout.toLowerCase() === 'us'">
+      <div class="nf-title" v-html="text.nutritionFacts || 'Nutrition Facts'">
+      </div>
+      <div class="nf-line">
+        <div class="nf-serving">
+          <div class="nf-serving-per-container" v-if="servingPerContainer > 0">
+            {{ servingPerContainer }} <span v-html="text.servingsPerContainer || 'Serving per container'"></span>
           </div>
-          <div v-if="settings.readOnly">
-            <span v-html="text.servingSize || 'Serving Size:'">
-            </span>
-            <template v-if="!settings.multipleItems">
-              {{ value.serving }} x {{ itemName }}
-            </template>
-            <span v-if="settings.multipleItems" v-html="text.multipleItems || 'Multiple items'">
-            </span>
+          <template v-if="!settings.readOnly">
+          <input
+            type="text"
+            class="nf-modifier-field"
+            @click="selectAll()"
+            @keydown="serving.isModified = true"
+            data-role="none"
+            aria-label="Change the Quantity Textbox"
+            v-model.number.lazy="serving.value">
+          </template>
+          <div class="nf-item-name" :class="{ 'read-only': settings.readOnly }">
+            <div v-if="!settings.readOnly">
+              {{ servingUnitName }}
+              <template v-if="servingWeight !== 0">
+                ({{ servingWeight }}g)
+              </template>
+            </div>
+            <div v-if="settings.readOnly">
+              <span v-html="text.servingSize || 'Serving Size:'">
+              </span>
+              <template v-if="!settings.multipleItems">
+                {{ value.serving }} x {{ itemName }}
+              </template>
+              <span v-if="settings.multipleItems" v-html="text.multipleItems || 'Multiple items'">
+              </span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="nf-bar2"></div>
-    <div class="nf-amount-per-serving" v-html="text.amountPerServing || 'Amount per serving'">
-    </div>
-    <div class="nf-calories" v-if="calories.show">
-      <span v-html="text.calories || 'Calories'"></span>
-      <span class="nf-pr" itemprop="calories">{{ calories.value }}</span>
-    </div>
-    <div class="nf-bar1"></div>
-    <div class="nf-line nf-text-right">
-      <span class="nf-highlight nf-percent-dv">% <span v-html="text.dailyValues || 'Daily Value'"></span>*</span>
-    </div>
-    <div class="nf-line" v-if="totalFat.show">
-      <span class="nf-highlight nf-pr" aria-hidden="true">{{ totalFat.dv }}%</span>
-      <span class="nf-highlight" v-html="text.totalFat || 'Total Fat'"></span>
-      <span itemprop="fatContent">
-        {{ totalFat.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
-    </span>
-    </div>
-    <div class="nf-line nf-indent" v-if="saturatedFat.show">
-      <span class="nf-highlight nf-pr" aria-hidden="true">{{ saturatedFat.dv }}%</span>
-      <span v-html="text.satFat || 'Saturated Fat'"></span>
-      <span itemprop="saturatedFatContent">
-        {{ saturatedFat.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
+      <div class="nf-bar2"></div>
+      <div class="nf-amount-per-serving" v-html="text.amountPerServing || 'Amount per serving'">
+      </div>
+      <div class="nf-calories" v-if="calories.show">
+        <span v-html="text.calories || 'Calories'"></span>
+        <span class="nf-pr" itemprop="calories">{{ calories.value }}</span>
+      </div>
+      <div class="nf-bar1"></div>
+      <div class="nf-line nf-text-right">
+        <span class="nf-highlight nf-percent-dv">% <span v-html="text.dailyValues || 'Daily Value'"></span>*</span>
+      </div>
+      <div class="nf-line" v-if="totalFat.show">
+        <span class="nf-highlight nf-pr" aria-hidden="true">{{ totalFat.dv }}%</span>
+        <span class="nf-highlight" v-html="text.totalFat || 'Total Fat'"></span>
+        <span itemprop="fatContent">
+          {{ totalFat.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
       </span>
-    </div>
-    <div class="nf-line nf-indent" v-if="transFat.show">
-      <span v-html="text.transFat || '<em>Trans</em> Fat'"></span>
-      <span itemprop="transFatContent">
-        {{ transFat.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
-      </span>
-    </div>
-    <div class="nf-line" v-if="cholesterol.show">
-      <span class="nf-highlight nf-pr" aria-hidden="true">{{ cholesterol.dv }}%</span>
-      <span class="nf-highlight" v-html="text.cholesterol || 'Cholesterol'"></span>
-      <span itemprop="cholesterolContent">
-        {{ cholesterol.value }}<span aria-hidden="true">mg</span><span class="sr-only"> milligrams</span>
-      </span>
-    </div>
-    <div class="nf-line" v-if="sodium.show">
-      <span class="nf-highlight nf-pr" aria-hidden="true">{{ sodium.dv }}%</span>
-      <span class="nf-highlight" v-html="text.sodium || 'Sodium'"></span>
-      <span itemprop="cholesterolContent">
-        {{ sodium.value }}<span aria-hidden="true">mg</span><span class="sr-only"> milligrams</span>
-      </span>
-    </div>
-    <div class="nf-line" v-if="totalCarb.show">
-      <span class="nf-highlight nf-pr" aria-hidden="true">{{ totalCarb.dv }}%</span>
-      <span class="nf-highlight" v-html="text.totalCarb || 'Total Carbohydrates'"></span>
-      <span itemprop="carbohydrateContent">
-        {{ totalCarb.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
-      </span>
-    </div>
-    <div class="nf-line nf-indent" v-if="fiber.show">
-      <span class="nf-highlight nf-pr" aria-hidden="true">{{ fiber.dv }}%</span>
-      <span v-html="text.fiber || 'Dietary Fiber'"></span>
-      <span itemprop="fiberContent">
-        {{ fiber.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
-      </span>
-    </div>
-    <div class="nf-line nf-indent" v-if="sugars.show">
-      <span v-html="text.sugars || 'Sugars'"></span>
-      <span itemprop="sugarContent">
-        {{ sugars.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
-      </span>
-    </div>
-    <div class="nf-line nf-indent2" v-if="addedSugars.show">
-      <span class="nf-highlight nf-pr" aria-hidden="true">{{ addedSugars.dv }}%</span>
-      <span>
-        <span v-html="text.includes || 'Includes'"></span>
-        <span itemprop="">{{ addedSugars.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
+      </div>
+      <div class="nf-line nf-indent" v-if="saturatedFat.show">
+        <span class="nf-highlight nf-pr" aria-hidden="true">{{ saturatedFat.dv }}%</span>
+        <span v-html="text.satFat || 'Saturated Fat'"></span>
+        <span itemprop="saturatedFatContent">
+          {{ saturatedFat.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
         </span>
-        <span v-html="text.addedSugars || 'Added Sugars'"></span>
-      </span>
-    </div>
-    <div class="nf-line" v-if="protein.show">
-      <span class="nf-highlight" v-html="text.protein || 'Protein'"></span>
-      <span itemprop="proteinContent">
-        {{ protein.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
-      </span>
-    </div>
-    <div class="nf-bar2"></div>
-    <div class="nf-vitamins">
+      </div>
+      <div class="nf-line nf-indent" v-if="transFat.show">
+        <span v-html="text.transFat || '<em>Trans</em> Fat'"></span>
+        <span itemprop="transFatContent">
+          {{ transFat.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
+        </span>
+      </div>
+      <div class="nf-line" v-if="cholesterol.show">
+        <span class="nf-highlight nf-pr" aria-hidden="true">{{ cholesterol.dv }}%</span>
+        <span class="nf-highlight" v-html="text.cholesterol || 'Cholesterol'"></span>
+        <span itemprop="cholesterolContent">
+          {{ cholesterol.value }}<span aria-hidden="true">mg</span><span class="sr-only"> milligrams</span>
+        </span>
+      </div>
+      <div class="nf-line" v-if="sodium.show">
+        <span class="nf-highlight nf-pr" aria-hidden="true">{{ sodium.dv }}%</span>
+        <span class="nf-highlight" v-html="text.sodium || 'Sodium'"></span>
+        <span itemprop="sodiumContent">
+          {{ sodium.value }}<span aria-hidden="true">mg</span><span class="sr-only"> milligrams</span>
+        </span>
+      </div>
+      <div class="nf-line" v-if="totalCarb.show">
+        <span class="nf-highlight nf-pr" aria-hidden="true">{{ totalCarb.dv }}%</span>
+        <span class="nf-highlight" v-html="text.totalCarb || 'Total Carbohydrates'"></span>
+        <span itemprop="carbohydrateContent">
+          {{ totalCarb.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
+        </span>
+      </div>
+      <div class="nf-line nf-indent" v-if="fiber.show">
+        <span class="nf-highlight nf-pr" aria-hidden="true">{{ fiber.dv }}%</span>
+        <span v-html="text.fiber || 'Dietary Fiber'"></span>
+        <span itemprop="fiberContent">
+          {{ fiber.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
+        </span>
+      </div>
+      <div class="nf-line nf-indent" v-if="sugars.show">
+        <span v-html="text.sugars || 'Sugars'"></span>
+        <span itemprop="sugarContent">
+          {{ sugars.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
+        </span>
+      </div>
+      <div class="nf-line nf-indent2" v-if="addedSugars.show">
+        <span class="nf-highlight nf-pr" aria-hidden="true">{{ addedSugars.dv }}%</span>
+        <span>
+          <span v-html="text.includes || 'Includes'"></span>
+          <span itemprop="">{{ addedSugars.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
+          </span>
+          <span v-html="text.addedSugars || 'Added Sugars'"></span>
+        </span>
+      </div>
+      <div class="nf-line" v-if="protein.show">
+        <span class="nf-highlight" v-html="text.protein || 'Protein'"></span>
+        <span itemprop="proteinContent">
+          {{ protein.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
+        </span>
+      </div>
+      <div class="nf-bar2"></div>
       <div class="nf-vitamins">
-        <div class="nf-vitamin-column" v-if="vitaminA.show">
-          <span v-html="text.vitaminA || 'Vitamin A'"></span> {{ vitaminA.value }}<span aria-hidden="true">IU</span>
-          <span class="sr-only"> International Unit</span>
-          <span class="nf-pr" aria-hidden="true">{{ vitaminA.dv }}%</span>
-        </div>
-        <div class="nf-vitamin-column" v-if="vitaminC.show">
-          <span v-html="text.vitaminC || 'Vitamin C'"></span> {{ vitaminC.value }}<span aria-hidden="true">mg</span>
-          <span class="sr-only"> milligrams</span>
-          <span class="nf-pr" aria-hidden="true">{{ vitaminC.dv }}%</span>
-        </div>
-        <div class="nf-vitamin-column" v-if="vitaminD.show">
-          <span v-html="text.vitaminD || 'Vitamin D'"></span> {{ vitaminD.value }}<span aria-hidden="true">mcg</span>
-          <span class="sr-only"> micrograms</span>
-          <span class="nf-pr" aria-hidden="true">{{ vitaminD.dv }}%</span>
-        </div>
-        <div class="nf-vitamin-column" v-if="calcium.show">
-          <span v-html="text.calcium || 'Calcium'"></span> {{ calcium.value }}<span aria-hidden="true">mg</span>
-          <span class="sr-only"> milligrams</span>
-          <span class="nf-pr" aria-hidden="true">{{ calcium.dv }}%</span>
-        </div>
-        <div class="nf-vitamin-column" v-if="iron.show">
-          <span v-html="text.iron || 'Iron'"></span> {{ iron.value }}<span aria-hidden="true">mg</span>
-          <span class="sr-only"> milligrams</span>
-          <span class="nf-pr" aria-hidden="true">{{ iron.dv }}%</span>
-        </div>
-        <div class="nf-vitamin-column" v-if="potassium.show">
-          <span v-html="text.potassium || 'Potassium'"></span> {{ potassium.value }}<span aria-hidden="true">mg</span>
-          <span class="sr-only"> milligrams</span>
-          <span class="nf-pr" aria-hidden="true">{{ potassium.dv }}%</span>
+        <div class="nf-vitamins">
+          <div class="nf-vitamin-column" v-if="vitaminA.show">
+            <span v-html="text.vitaminA || 'Vitamin A'"></span> {{ vitaminA.value }}<span aria-hidden="true">IU</span>
+            <span class="sr-only"> International Unit</span>
+            <span class="nf-pr" aria-hidden="true">{{ vitaminA.dv }}%</span>
+          </div>
+          <div class="nf-vitamin-column" v-if="vitaminC.show">
+            <span v-html="text.vitaminC || 'Vitamin C'"></span> {{ vitaminC.value }}<span aria-hidden="true">mg</span>
+            <span class="sr-only"> milligrams</span>
+            <span class="nf-pr" aria-hidden="true">{{ vitaminC.dv }}%</span>
+          </div>
+          <div class="nf-vitamin-column" v-if="vitaminD.show">
+            <span v-html="text.vitaminD || 'Vitamin D'"></span> {{ vitaminD.value }}<span aria-hidden="true">mcg</span>
+            <span class="sr-only"> micrograms</span>
+            <span class="nf-pr" aria-hidden="true">{{ vitaminD.dv }}%</span>
+          </div>
+          <div class="nf-vitamin-column" v-if="calcium.show">
+            <span v-html="text.calcium || 'Calcium'"></span> {{ calcium.value }}<span aria-hidden="true">mg</span>
+            <span class="sr-only"> milligrams</span>
+            <span class="nf-pr" aria-hidden="true">{{ calcium.dv }}%</span>
+          </div>
+          <div class="nf-vitamin-column" v-if="iron.show">
+            <span v-html="text.iron || 'Iron'"></span> {{ iron.value }}<span aria-hidden="true">mg</span>
+            <span class="sr-only"> milligrams</span>
+            <span class="nf-pr" aria-hidden="true">{{ iron.dv }}%</span>
+          </div>
+          <div class="nf-vitamin-column" v-if="potassium.show">
+            <span v-html="text.potassium || 'Potassium'"></span> {{ potassium.value }}<span aria-hidden="true">mg</span>
+            <span class="sr-only"> milligrams</span>
+            <span class="nf-pr" aria-hidden="true">{{ potassium.dv }}%</span>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="nf-bar1"></div>
-    <div class="nf-footnote">
-      <span>
-        {{ text.footnote || 'The % Daily Value (DV) tells you how much a nutrient in a serving of food contributes to a daily diet. 2000 calories a day is used for general nutrition advice.' }}
-      </span>
-        <div class="nf-ingredient-statement">
-          <strong v-html="(text.ingredients || 'INGREDIENTS') + ':'"></strong>
-          <div v-html="ingredientStatement"></div>
-        </div>
-    </div>
+      <div class="nf-bar1"></div>
+      <div class="nf-footnote">
+        <span>
+          {{ text.footnote || 'The % Daily Value (DV) tells you how much a nutrient in a serving of food contributes to a daily diet. 2000 calories a day is used for general nutrition advice.' }}
+        </span>
+          <div class="nf-ingredient-statement">
+            <strong v-html="(text.ingredients || 'INGREDIENTS') + ':'"></strong>
+            <div v-html="ingredientStatement"></div>
+          </div>
+      </div>
+    </template>
+    <!-- UK -->
+    <template v-if="settings.layout.toLowerCase() === 'uk'">
+      <div class="nf-title" v-html="text.nutritionFacts || 'Nutrition'">
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Typical Values</th>
+            <th>Per 100g</th>
+            <th>
+              <template v-if="!settings.readOnly">
+                <input
+                  type="text"
+                  class="nf-modifier-field"
+                  @click="selectAll()"
+                  @keydown="serving.isModified = true"
+                  data-role="none"
+                  aria-label="Change the Quantity Textbox"
+                  v-model.number.lazy="serving.value">
+              </template>
+              {{ servingUnitName }}
+              <template v-if="servingWeight !== 0">
+                ({{ servingWeight }}g)
+              </template>
+            </th>
+            <th>%*({{ servingWeight }}g)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Energy</td>
+            <td>{{ kilojoules.per100 }}kj</td>
+            <td>{{ kilojoules.value }}kj</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td itemprop="calories">{{ calories.per100 }}kcal</td>
+            <td itemprop="calories">{{ calories.value }}kcal</td>
+            <td>{{ calories.dv }}%</td>
+          </tr>
+          <tr>
+            <td>Total Fat</td>
+            <td itemprop="fatContent">{{ totalFat.per100 }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></td>
+            <td itemprop="fatContent">{{ totalFat.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></td>
+            <td>{{ totalFat.dv }}%</td>
+          </tr>
+          <tr>
+            <td class="nf-indent">Saturated Fat</td>
+            <td itemprop="saturatedFatContent">{{ saturatedFat.per100 }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></td>
+            <td itemprop="saturatedFatContent">{{ saturatedFat.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></td>
+            <td>{{ saturatedFat.dv }}%</td>
+          </tr>
+          <tr>
+            <td>Carbohydrate</td>
+            <td itemprop="carbohydrateContent">{{ totalCarb.per100 }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></td>
+            <td itemprop="carbohydrateContent">{{ totalCarb.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></td>
+            <td>{{ totalCarb.dv }}%</td>
+          </tr>
+          <tr>
+            <td class="nf-indent">Sugars</td>
+            <td itemprop="sugarContent">{{ sugars.per100 }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></td>
+            <td itemprop="sugarContent">{{ sugars.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></td>
+            <td>{{ sugars.dv }}%</td>
+          </tr>
+          <tr>
+            <td>Fibre</td>
+            <td itemprop="fiberContent">{{ fiber.per100 }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></td>
+            <td itemprop="fiberContent">{{ fiber.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Protein</td>
+            <td itemprop="proteinContent">{{ protein.per100 }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></td>
+            <td itemprop="proteinContent">{{ protein.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></td>
+            <td>{{ protein.dv }}%</td>
+          </tr>
+          <tr>
+            <td>Salt</td>
+            <td itemprop="sodiumContent">{{ salt.per100 }}<span aria-hidden="true">g</span><span class="sr-only">grams</span></td>
+            <td itemprop="sodiumContent">{{ salt.value }}<span aria-hidden="true">g</span><span class="sr-only">grams</span></td>
+            <td>{{ salt.dv }}%</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4">
+              <span v-html="text.footnote || '* Reference intake of an average adult (8400kj/2000kcal)'">
+              </span>
+              <div class="nf-ingredient-statement">
+                <strong v-html="(text.ingredients || 'INGREDIENTS') + ':'"></strong>
+                <div v-html="ingredientStatement"></div>
+              </div>
+              <div class="nf-disclaimer" v-if="text.disclaimer" v-html="text.disclaimer">
+              </div>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </template>
   </div>
 </template>
 <script>
@@ -190,11 +295,11 @@ export default {
         isModified: false
       },
       rdi: {
-        totalFat: 65,
+        totalFat: { us: 65, uk: 70 },
         saturatedFat: 20,
         cholesterol: 300,
         sodium: 2400,
-        totalCarb: 300,
+        totalCarb: { us: 300, uk: 260 },
         fiber: 25,
         addedSugars: 50,
         protein: 50,
@@ -203,7 +308,11 @@ export default {
         iron: 18,
         potassium: 4700,
         vitaminA: 5000,
-        vitaminC: 60
+        vitaminC: 60,
+        kilojoules: 8400,
+        calories: 2000,
+        sugars: { us: 100, uk: 90 },
+        salt: 6
       }
     };
   },
@@ -232,12 +341,21 @@ export default {
     },
 
     unitValue (nutrient) {
-      if (this.value.hasOwnProperty('nutrition') && this.value.nutrition.hasOwnProperty(nutrient)) {
+      if ((this.value.hasOwnProperty('nutrition') && this.value.nutrition.hasOwnProperty(nutrient)) ||
+        nutrient === 'kilojoules' ||
+        nutrient === 'salt') {
+        let layout = this.settings.layout.toLowerCase();
         let value = this.value.nutrition[nutrient];
 
         switch (nutrient) {
+          case 'kilojoules':
+            value = this.value.nutrition['calories'] * 4.184;
+            return this.ukRound(nutrient, this.multiplier(value));
+
           case 'calories':
-            return this.roundCalories(this.multiplier(value));
+            return layout === 'uk'
+              ? this.ukRound(nutrient, this.multiplier(value))
+              : this.roundCalories(this.multiplier(value));
 
           // Fats
           case 'totalFat':
@@ -245,10 +363,16 @@ export default {
           case 'monounsaturatedFat':
           case 'polyunsaturatedFat':
           case 'saturatedFat':
-            return this.roundFats(this.multiplier(value));
+            return layout === 'uk'
+              ? this.ukRound(nutrient, this.multiplier(value))
+              : this.roundFats(this.multiplier(value));
 
           case 'sodium':
             return this.roundSodium(this.multiplier(value));
+
+          case 'salt':
+            value = this.value.nutrition['sodium'] * 0.0025;
+            return this.ukRound(nutrient, this.multiplier(value));
 
           case 'cholesterol':
             return this.roundCholesterol(this.multiplier(value));
@@ -272,12 +396,14 @@ export default {
           case 'sugars':
           case 'addedSugars':
           case 'protein':
-            return this.roundEssentials(this.multiplier(value));
+            return layout === 'uk'
+              ? this.ukRound(nutrient, this.multiplier(value))
+              : this.roundEssentials(this.multiplier(value));
 
           case 'servingWeight':
             return this.servingUnitName.toLowerCase() === 'serving'
-              ? this.byServing(value).toFixed(0)
-              : this.byWeight(value).toFixed(0);
+              ? this.roundToSpecificDecimalPlace(this.byServing(value), 0)
+              : this.roundToSpecificDecimalPlace(this.byWeight(value), 0);
         }
       }
     },
@@ -290,7 +416,12 @@ export default {
 
     percentDailyValue (nutrient) {
       let unitValue = this.unitValue(nutrient);
-      let dv = (unitValue / this.rdi[nutrient] * 100).toFixed(0);
+      let layout = this.settings.layout.toLowerCase();
+      let rdi = (typeof this.rdi[nutrient]) === 'object'
+        ? this.rdi[nutrient][layout]
+        : this.rdi[nutrient];
+
+      let dv = this.roundToSpecificDecimalPlace(unitValue / rdi * 100, 0);
 
       switch (nutrient) {
         case 'cholesterol':
@@ -307,6 +438,10 @@ export default {
           if (unitValue === '< 1') {
             dv = 0;
           }
+          break;
+
+        case 'salt':
+          dv = this.roundToSpecificDecimalPlace(this.unitValue('sodium') * 0.0025 / rdi * 100, 0);
           break;
       }
 
@@ -335,7 +470,7 @@ export default {
 
     roundCalories (value) {
       if (!this.settings.useFdaRounding) {
-        return value.toFixed(0);
+        return this.roundToSpecificDecimalPlace(value, 0);
       }
 
       if (value < 5) {
@@ -350,7 +485,7 @@ export default {
 
     roundFats (value) {
       if (!this.settings.useFdaRounding) {
-        return value.toFixed(0);
+        return this.roundToSpecificDecimalPlace(value, 0);
       }
 
       if (value < 0.5) {
@@ -365,7 +500,7 @@ export default {
 
     roundCholesterol (value) {
       if (!this.settings.useFdaRounding) {
-        return value.toFixed(0);
+        return this.roundToSpecificDecimalPlace(value, 0);
       }
 
       if (value < 2) {
@@ -379,7 +514,7 @@ export default {
 
     roundSodium (value) {
       if (!this.settings.useFdaRounding) {
-        return value.toFixed(0);
+        return this.roundToSpecificDecimalPlace(value, 0);
       }
 
       if (value < 5) {
@@ -394,7 +529,7 @@ export default {
 
     roundPotassium (value) {
       if (!this.settings.useFdaRounding) {
-        return value.toFixed(0);
+        return this.roundToSpecificDecimalPlace(value, 0);
       }
 
       if (value < 5) {
@@ -411,7 +546,7 @@ export default {
     // Total Carb, Fiber, Sugar, Sugar Alcohol and Protein
     roundEssentials (value) {
       if (!this.settings.useFdaRounding) {
-        return value.toFixed(0);
+        return this.roundToSpecificDecimalPlace(value, 0);
       }
 
       if (value < 0.5) {
@@ -427,7 +562,7 @@ export default {
     // Vitamin D, Calcium and Iron
     roundVitaminsMinerals (value) {
       if (!this.settings.useFdaRounding) {
-        return value.toFixed(0);
+        return this.roundToSpecificDecimalPlace(value, 0);
       }
 
       if (value > 0) {
@@ -446,7 +581,7 @@ export default {
 
     roundToNearestNum (value, nearest) {
       if (!this.settings.useFdaRounding) {
-        return value.toFixed(0);
+        return this.roundToSpecificDecimalPlace(value, 0);
       }
 
       value = this.roundToSpecificDecimalPlace(value, 4);
@@ -461,9 +596,84 @@ export default {
     },
 
     selectAll () {
-      let el = document.querySelector('#serving');
+      let el = document.querySelector('.' + this.settings.layout.toLowerCase() + ' .nf-modifier-field');
       el.select();
       el.setSelectionRange(0, 9999);
+    },
+
+    per100 (nutrient) {
+      let value;
+
+      if (nutrient === 'kilojoules') {
+        value = this.value.nutrition['calories'] / this.value.nutrition.servingWeight * 100 * 4.184;
+      } else if (nutrient === 'salt') {
+        value = this.value.nutrition['sodium'] * 2.5 / 1000 / this.value.nutrition.servingWeight * 100;
+      } else {
+        value = this.value.nutrition[nutrient] / this.value.nutrition.servingWeight * 100;
+      }
+
+      return this.ukRound(nutrient, value);
+    },
+
+    ukRound (nutrient, value) {
+      let round = this.settings.useFdaRounding;
+
+      switch (nutrient) {
+        case 'kilojoules':
+          return round
+            ? Math.round(value)
+            : this.roundToSpecificDecimalPlace(value, 1);
+
+        case 'calories':
+          return round
+            ? Math.round(value)
+            : this.roundToSpecificDecimalPlace(value, 1);
+
+        case 'totalFat':
+        case 'transFat':
+        case 'saturatedFat':
+        case 'monounsaturatedFat':
+        case 'polyunsaturatedFat':
+        case 'totalCarb':
+        case 'fiber':
+        case 'sugars':
+        case 'addedSugars':
+        case 'protein':
+          if (value >= 10) {
+            value = round
+              ? Math.round(value)
+              : this.roundToSpecificDecimalPlace(value, 1);
+          }
+
+          if ((value < 10 && value > 0.5) || (value < 10 && value > 0.1 && nutrient === 'saturatedFat')) {
+            value = this.roundToSpecificDecimalPlace(value, 1);
+          }
+
+          if (value < 0.5 && value > 0 && nutrient !== 'saturatedFat') {
+            value = '<0.5';
+          }
+
+          if (value < 0.1 && value > 0 && nutrient === 'saturatedFat') {
+            value = '<0.1';
+          }
+
+          return value;
+
+        case 'salt':
+          if (value >= 1) {
+            value = this.roundToSpecificDecimalPlace(value, 0);
+          }
+
+          if (value < 1 && value > 0.0125) {
+            value = this.roundToSpecificDecimalPlace(value, 2);
+          }
+
+          if (value < 0.0125 && value > 0) {
+            value = '<0.01';
+          }
+
+          return value;
+      }
     }
   },
 
@@ -481,7 +691,10 @@ export default {
           : false,
         multipleItems: this.hasOption('multipleItems')
           ? this.options.multipleItems
-          : false
+          : false,
+        layout: this.hasOption('layout')
+          ? this.options.layout
+          : 'US'
       };
     },
     itemName () {
@@ -494,118 +707,179 @@ export default {
       return this.value.hasOwnProperty('servingUnitName') && this.value.servingUnitName !== '' ? this.value.servingUnitName : 'Serving';
     },
     calories () {
+      let n = 'calories';
+
       return {
-        value: this.unitValue('calories'),
-        show: this.hasOption('calories') ? this.options.calories.show : 1
+        per100: this.per100(n),
+        value: this.unitValue(n),
+        dv: this.percentDailyValue(n),
+        show: this.hasOption(n) ? this.options.calories.show : 1
+      };
+    },
+    kilojoules () {
+      let n = 'kilojoules';
+
+      return {
+        per100: this.per100(n),
+        value: this.unitValue(n)
       };
     },
     totalFat () {
+      let n = 'totalFat';
+
       return {
-        value: this.unitValue('totalFat'),
-        dv: this.percentDailyValue('totalFat'),
-        show: this.hasOption('totalFat') ? this.options.totalFat.show : 1
+        per100: this.per100(n),
+        value: this.unitValue(n),
+        dv: this.percentDailyValue(n),
+        show: this.hasOption(n) ? this.options.totalFat.show : 1
       };
     },
     saturatedFat () {
+      let n = 'saturatedFat';
+
       return {
-        value: this.unitValue('saturatedFat'),
-        dv: this.percentDailyValue('saturatedFat'),
-        show: this.hasOption('saturatedFat') ? this.options.saturatedFat.show : 1
+        per100: this.per100(n),
+        value: this.unitValue(n),
+        dv: this.percentDailyValue(n),
+        show: this.hasOption(n) ? this.options.saturatedFat.show : 1
       };
     },
     transFat () {
+      let n = 'transFat';
+
       return {
-        value: this.unitValue('transFat'),
-        show: this.hasOption('transFat') ? this.options.transFat.show : 1
+        value: this.unitValue(n),
+        show: this.hasOption(n) ? this.options.transFat.show : 1
       };
     },
     cholesterol () {
+      let n = 'cholesterol';
+
       return {
-        value: this.unitValue('cholesterol'),
-        dv: this.percentDailyValue('cholesterol'),
-        show: this.hasOption('cholesterol') ? this.options.cholesterol.show : 1
+        value: this.unitValue(n),
+        dv: this.percentDailyValue(n),
+        show: this.hasOption(n) ? this.options.cholesterol.show : 1
       };
     },
     sodium () {
+      let n = 'sodium';
+
       return {
-        value: this.unitValue('sodium'),
-        dv: this.percentDailyValue('sodium'),
-        show: this.hasOption('sodium') ? this.options.sodium.show : 1
+        value: this.unitValue(n),
+        dv: this.percentDailyValue(n),
+        show: this.hasOption(n) ? this.options.sodium.show : 1
+      };
+    },
+    salt () {
+      let n = 'salt';
+
+      return {
+        per100: this.per100(n),
+        value: this.unitValue(n),
+        dv: this.percentDailyValue(n)
       };
     },
     totalCarb () {
+      let n = 'totalCarb';
+
       return {
-        value: this.unitValue('totalCarb'),
-        dv: this.percentDailyValue('totalCarb'),
-        show: this.hasOption('totalCarb') ? this.options.totalCarb.show : 1
+        per100: this.per100(n),
+        value: this.unitValue(n),
+        dv: this.percentDailyValue(n),
+        show: this.hasOption(n) ? this.options.totalCarb.show : 1
       };
     },
     fiber () {
+      let n = 'fiber';
+
       return {
-        value: this.unitValue('fiber'),
-        dv: this.percentDailyValue('fiber'),
-        show: this.hasOption('fiber') ? this.options.fiber.show : 1
+        per100: this.per100(n),
+        value: this.unitValue(n),
+        dv: this.percentDailyValue(n),
+        show: this.hasOption(n) ? this.options.fiber.show : 1
       };
     },
     sugars () {
+      let n = 'sugars';
+
       return {
-        value: this.unitValue('sugars'),
-        show: this.hasOption('sugars') ? this.options.sugars.show : 1
+        per100: this.per100(n),
+        value: this.unitValue(n),
+        dv: this.percentDailyValue(n),
+        show: this.hasOption(n) ? this.options.sugars.show : 1
       };
     },
     addedSugars () {
+      let n = 'addedSugars';
+
       return {
-        value: this.unitValue('addedSugars'),
-        dv: this.percentDailyValue('addedSugars'),
-        show: this.hasOption('addedSugars') ? this.options.addedSugars.show : 0
+        value: this.unitValue(n),
+        dv: this.percentDailyValue(n),
+        show: this.hasOption(n) ? this.options.addedSugars.show : 0
       };
     },
     protein () {
+      let n = 'protein';
+
       return {
-        value: this.unitValue('protein'),
-        show: this.hasOption('protein') ? this.options.protein.show : 1
+        per100: this.per100(n),
+        value: this.unitValue(n),
+        dv: this.percentDailyValue(n),
+        show: this.hasOption(n) ? this.options.protein.show : 1
       };
     },
     vitaminA () {
+      let n = 'vitaminA';
+
       return {
-        value: this.unitValue('vitaminA'),
-        dv: this.percentDailyValue('vitaminA'),
-        show: this.hasOption('vitaminA') ? this.options.vitaminA.show : 0
+        value: this.unitValue(n),
+        dv: this.percentDailyValue(n),
+        show: this.hasOption(n) ? this.options.vitaminA.show : 0
       };
     },
     vitaminC () {
+      let n = 'vitaminC';
+
       return {
-        value: this.unitValue('vitaminC'),
-        dv: this.percentDailyValue('vitaminC'),
-        show: this.hasOption('vitaminC') ? this.options.vitaminC.show : 0
+        value: this.unitValue(n),
+        dv: this.percentDailyValue(n),
+        show: this.hasOption(n) ? this.options.vitaminC.show : 0
       };
     },
     vitaminD () {
+      let n = 'vitaminD';
+
       return {
-        value: this.unitValue('vitaminD'),
-        dv: this.percentDailyValue('vitaminD'),
-        show: this.hasOption('vitaminD') ? this.options.vitaminD.show : 1
+        value: this.unitValue(n),
+        dv: this.percentDailyValue(n),
+        show: this.hasOption(n) ? this.options.vitaminD.show : 1
       };
     },
     calcium () {
+      let n = 'calcium';
+
       return {
-        value: this.unitValue('calcium'),
-        dv: this.percentDailyValue('calcium'),
-        show: this.hasOption('calcium') ? this.options.calcium.show : 1
+        value: this.unitValue(n),
+        dv: this.percentDailyValue(n),
+        show: this.hasOption(n) ? this.options.calcium.show : 1
       };
     },
     iron () {
+      let n = 'iron';
+
       return {
-        value: this.unitValue('iron'),
-        dv: this.percentDailyValue('iron'),
-        show: this.hasOption('iron') ? this.options.iron.show : 1
+        value: this.unitValue(n),
+        dv: this.percentDailyValue(n),
+        show: this.hasOption(n) ? this.options.iron.show : 1
       };
     },
     potassium () {
+      let n = 'potassium';
+
       return {
-        value: this.unitValue('potassium'),
-        dv: this.percentDailyValue('potassium'),
-        show: this.hasOption('potassium') ? this.options.potassium.show : 1
+        value: this.unitValue(n),
+        dv: this.percentDailyValue(n),
+        show: this.hasOption(n) ? this.options.potassium.show : 1
       };
     },
     servingWeight () {
@@ -741,7 +1015,8 @@ export default {
    border-bottom: 1px solid #000;
   }
 
-  &-ingredient-statement {
+  &-ingredient-statement,
+  &-disclaimer {
     padding-top: 8px;
   }
 
@@ -792,6 +1067,38 @@ export default {
   &-bar1,
   &-bar2 {
     background-color: #000;
+  }
+
+  &.uk .nf-title {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    padding-top: 8px;
+    padding-bottom: 6px;
+  }
+
+  &.uk .nf-modifier-field {
+    width: 20px;
+    padding: 3px;
+    text-align: center;
+    float: none;
+    margin-top: 0;
+    margin-right: 3px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    border-top: 4px solid #000;
+    tr th,
+    tbody tr td {
+      border-bottom: 1px solid #000;
+      padding-top: 4px;
+      padding-bottom: 4px;
+    }
+    tfoot tr td {
+      padding-top: 4px;
+      font-size: 90%;
+    }
   }
 }
 
