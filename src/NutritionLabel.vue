@@ -198,57 +198,132 @@
         <tbody>
           <tr>
             <td>Energy</td>
-            <td>{{ kilojoules.per100 }}kj</td>
-            <td>{{ kilojoules.value }}kj</td>
+            <td>
+              <template v-if="zeroServing">&ndash;</template>
+              <template v-if="!zeroServing">{{ kilojoules.per100 }}kj</template>
+            </td>
+            <td>
+              <template v-if="zeroServing">&ndash;</template>
+              <template v-if="!zeroServing">{{ kilojoules.value }}kj</template>
+            </td>
             <td></td>
           </tr>
           <tr>
             <td></td>
-            <td itemprop="calories">{{ calories.per100 }}kcal</td>
-            <td itemprop="calories">{{ calories.value }}kcal</td>
-            <td>{{ calories.dv }}%</td>
+            <td itemprop="calories">
+              <template v-if="zeroServing">&ndash;</template>
+              <template v-if="!zeroServing">{{ calories.per100 }}kcal</template>
+            </td>
+            <td itemprop="calories">
+              <template v-if="zeroServing">&ndash;</template>
+              <template v-if="!zeroServing">{{ calories.value }}kcal</template>
+            </td>
+            <td>
+              <template v-if="zeroServing">&ndash;</template>
+              <template v-if="!zeroServing">{{ calories.dv }}%</template>
+            </td>
           </tr>
           <tr>
             <td>Total Fat</td>
-            <td itemprop="fatContent">{{ totalFat.per100 }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></td>
-            <td itemprop="fatContent">{{ totalFat.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></td>
-            <td>{{ totalFat.dv }}%</td>
+            <td itemprop="fatContent">
+              <template v-if="zeroServing">&ndash;</template>
+              <template v-if="!zeroServing">{{ totalFat.per100 }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></template>
+            </td>
+            <td itemprop="fatContent">
+              <template v-if="zeroServing">&ndash;</template>
+              <template v-if="!zeroServing">{{ totalFat.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></template>
+            </td>
+            <td>
+              <template v-if="zeroServing">&ndash;</template>
+              <template v-if="!zeroServing">{{ totalFat.dv }}%</template>
+            </td>
           </tr>
           <tr>
             <td class="nf-indent">Saturated Fat</td>
-            <td itemprop="saturatedFatContent">{{ saturatedFat.per100 }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></td>
-            <td itemprop="saturatedFatContent">{{ saturatedFat.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></td>
-            <td>{{ saturatedFat.dv }}%</td>
+            <td itemprop="saturatedFatContent">
+              <template v-if="zeroServing">&ndash;</template>
+              <template v-if="!zeroServing">{{ saturatedFat.per100 }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></template>
+            </td>
+            <td itemprop="saturatedFatContent">
+              <template v-if="zeroServing">&ndash;</template>
+              <template v-if="!zeroServing">{{ saturatedFat.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></template>
+            </td>
+            <td>
+              <template v-if="zeroServing">&ndash;</template>
+              <template v-if="!zeroServing">{{ saturatedFat.dv }}%</template>
+            </td>
           </tr>
           <tr>
             <td>Carbohydrate</td>
-            <td itemprop="carbohydrateContent">{{ totalCarb.per100 }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></td>
-            <td itemprop="carbohydrateContent">{{ totalCarb.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></td>
-            <td>{{ totalCarb.dv }}%</td>
+            <td itemprop="carbohydrateContent">
+              <template v-if="zeroServing">&ndash;</template>
+              <template v-if="!zeroServing">{{ totalCarb.per100 }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></template>
+            </td>
+            <td itemprop="carbohydrateContent">
+              <template v-if="zeroServing">&ndash;</template>
+              <template v-if="!zeroServing">{{ totalCarb.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></template>
+            </td>
+            <td>
+              <template v-if="zeroServing">&ndash;</template>
+              <template v-if="!zeroServing">{{ totalCarb.dv }}%</template>
+            </td>
           </tr>
           <tr>
             <td class="nf-indent">Sugars</td>
-            <td itemprop="sugarContent">{{ sugars.per100 }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></td>
-            <td itemprop="sugarContent">{{ sugars.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></td>
-            <td>{{ sugars.dv }}%</td>
+            <td itemprop="sugarContent">
+              <template v-if="zeroServing">&ndash;</template>
+              <template v-if="!zeroServing">{{ sugars.per100 }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></template>
+            </td>
+            <td itemprop="sugarContent">
+              <template v-if="zeroServing">&ndash;</template>
+              <template v-if="!zeroServing">{{ sugars.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></template>
+            </td>
+            <td>
+              <template v-if="zeroServing">&ndash;</template>
+              <template v-if="!zeroServing">{{ sugars.dv }}%</template>
+            </td>
           </tr>
           <tr>
             <td>Fibre</td>
-            <td itemprop="fiberContent">{{ fiber.per100 }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></td>
-            <td itemprop="fiberContent">{{ fiber.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></td>
+            <td itemprop="fiberContent">
+              <template v-if="zeroServing">&ndash;</template>
+              <template v-if="!zeroServing">{{ fiber.per100 }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></template>
+            </td>
+            <td itemprop="fiberContent">
+              <template v-if="zeroServing">&ndash;</template>
+              <template v-if="!zeroServing">{{ fiber.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></template>
+            </td>
             <td></td>
           </tr>
           <tr>
             <td>Protein</td>
-            <td itemprop="proteinContent">{{ protein.per100 }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></td>
-            <td itemprop="proteinContent">{{ protein.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></td>
-            <td>{{ protein.dv }}%</td>
+            <td itemprop="proteinContent">
+              <template v-if="zeroServing">&ndash;</template>
+              <template v-if="!zeroServing">{{ protein.per100 }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></template>
+            </td>
+            <td itemprop="proteinContent">
+              <template v-if="zeroServing">&ndash;</template>
+              <template v-if="!zeroServing">{{ protein.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span></template>
+            </td>
+            <td>
+              <template v-if="zeroServing">&ndash;</template>
+              <template v-if="!zeroServing">{{ protein.dv }}%</template>
+            </td>
           </tr>
           <tr>
             <td>Salt</td>
-            <td itemprop="sodiumContent">{{ salt.per100 }}<span aria-hidden="true">g</span><span class="sr-only">grams</span></td>
-            <td itemprop="sodiumContent">{{ salt.value }}<span aria-hidden="true">g</span><span class="sr-only">grams</span></td>
-            <td>{{ salt.dv }}%</td>
+            <td itemprop="sodiumContent">
+              <template v-if="zeroServing">&ndash;</template>
+              <template v-if="!zeroServing">{{ salt.per100 }}<span aria-hidden="true">g</span><span class="sr-only">grams</span></template>
+            </td>
+            <td itemprop="sodiumContent">
+              <template v-if="zeroServing">&ndash;</template>
+              <template v-if="!zeroServing">{{ salt.value }}<span aria-hidden="true">g</span><span class="sr-only">grams</span></template>
+            </td>
+            <td>
+              <template v-if="zeroServing">&ndash;</template>
+              <template v-if="!zeroServing">{{ salt.dv }}%</template>
+            </td>
           </tr>
         </tbody>
         <tfoot>
@@ -890,6 +965,9 @@ export default {
     },
     text () {
       return this.hasOption('locale') ? this.options.locale : {};
+    },
+    zeroServing () {
+      return this.serving.value <= 0;
     }
   }
 };
