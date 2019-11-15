@@ -1,5 +1,6 @@
 <template>
   <div itemtype="http://schema.org/NutritionInformation"
+    v-if="isLoaded"
     class="nf"
     :class="{ uk: settings.layout.toLowerCase() === 'uk', us: settings.layout.toLowerCase() !== 'uk' }"
     :style="{ width: settings.width }">
@@ -467,13 +468,6 @@ export default {
     };
   },
 
-  watch: {
-    value () {
-      this.isLoaded = true;
-      this.serving.value = this.value.serving;
-    }
-  },
-
   methods: {
     modifyServing (num) {
       if (this.serving.value === 0.5 && num === -1) { return; }
@@ -828,6 +822,9 @@ export default {
   },
 
   computed: {
+    isLoaded () {
+      return this.value.hasOwnProperty('name');
+    },
     settings () {
       return {
         width: this.hasOption('width')
