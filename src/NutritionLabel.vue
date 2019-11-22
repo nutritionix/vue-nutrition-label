@@ -158,6 +158,11 @@
         </div>
       </div>
       <div class="nf-bar1"></div>
+          <div v-if="caffeine.show">
+            <span class="nf-highlight" v-html="text.caffeine || 'Caffeine'"></span> {{ caffeine.value }}<span aria-hidden="true">mg</span>
+            <span class="sr-only"> milligrams</span>
+          </div>
+      <div v-if="caffeine.show" class="nf-bar2"></div>
       <div class="nf-footnote">
         <span>
           {{ text.footnote || 'The % Daily Value (DV) tells you how much a nutrient in a serving of food contributes to a daily diet. 2000 calories a day is used for general nutrition advice.' }}
@@ -524,6 +529,9 @@ export default {
           case 'potassium':
             value = value / 100 * this.rdi[nutrient];
             return this.roundPotassium(this.multiplier(value));
+
+          case 'caffeine':
+            return this.roundToNearestNum(this.multiplier(value), 1);
 
           // Vitamins and Minerals
           case 'vitaminA':
@@ -1027,6 +1035,14 @@ export default {
         value: this.unitValue(n),
         dv: this.percentDailyValue(n),
         show: this.hasOption(n) ? this.options.potassium.show : 1
+      };
+    },
+    caffeine () {
+      let n = 'caffeine';
+
+      return {
+        value: this.unitValue(n),
+        show: this.hasOption(n) ? this.options.caffeine.show : 1
       };
     },
     servingWeight () {

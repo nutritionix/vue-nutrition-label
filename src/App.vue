@@ -90,6 +90,10 @@
             <label>Potassium</label>
             <input type="number" v-model="n.potassium">
           </p>
+          <p v-if="options.caffeine.show">
+            <label>Caffeine</label>
+            <input type="number" v-model="n.caffeine">
+          </p>
         </form>
       </div>
       <div class="col2">
@@ -121,6 +125,7 @@ export default {
           servingsPerContainer: 'Servings Per Container:',
           amountPerServing: 'Amount Per Serving',
           calories: 'Calories',
+          caffeine: 'Caffeine',
           fatCalories: 'Calories from Fat',
           totalFat: 'Total Fat',
           satFat: 'Saturated Fat',
@@ -147,6 +152,10 @@ export default {
           multipleItems: 'Multiple Items'
         },
         addedSugars: {
+          show: 1,
+          na: 1
+        },
+        caffeine: {
           show: 1,
           na: 1
         },
@@ -239,6 +248,7 @@ export default {
         ingredientStatement: 'Swiss cheese, American cheese, more cheese and a burger.',
         nutrition: {
           calories: 523.1247,
+          caffeine: 12.43,
           fatCalories: 170,
           totalFat: 48.5941,
           saturatedFat: 69.3748,
