@@ -115,14 +115,14 @@ export default {
       options: {
         width: 280,
         useFdaRounding: 1,
-        readOnly: false,
+        readOnly: true,
         multipleItems: false,
         layout: 'US',
         locale: {
           nutritionFacts: 'Nutrition Facts',
           dailyValues: 'Daily Value',
-          servingSize: 'Serving Size:',
-          servingsPerContainer: 'Servings Per Container:',
+          servingSize: 'Serving Size',
+          servingsPerContainer: 'Servings Per Container',
           amountPerServing: 'Amount Per Serving',
           calories: 'Calories',
           caffeine: 'Caffeine',
@@ -241,9 +241,9 @@ export default {
         }
       },
       item: {
-        name: 'Super Cheese Burger',
+        name: 'Cheese Burger',
         serving: 1,
-        servingPerContainer: 0,
+        servingPerContainer: 1,
         servingUnitName: 'serving',
         ingredientStatement: 'Swiss cheese, American cheese, more cheese and a burger.',
         nutrition: {
@@ -307,7 +307,7 @@ export default {
     padding: 5px 10px 0 0;
     text-align: right;
   }
-  form input {
+  form input[type='number'] {
     background-color: #f0f0f0;
     border: none;
     padding: 4px 6px;

@@ -30,15 +30,15 @@
                 ({{ servingWeight }}g)
               </template>
             </div>
-            <div v-if="settings.readOnly">
-              <span v-html="text.servingSize || 'Serving Size:'">
+            <template v-if="settings.readOnly">
+              <span class="text-serving-size" v-html="text.servingSize || 'Serving Size'">
               </span>
-              <template v-if="!settings.multipleItems">
-                {{ value.serving }} x {{ itemName }}
-              </template>
+              <span class="text-serving-item" v-if="!settings.multipleItems">
+                {{ value.serving }} {{ itemName }}
+              </span>
               <span v-if="settings.multipleItems" v-html="text.multipleItems || 'Multiple items'">
               </span>
-            </div>
+            </template>
           </div>
         </div>
       </div>
@@ -157,12 +157,12 @@
           </div>
         </div>
       </div>
-      <div class="nf-bar1"></div>
+      <div class="nf-bar2"></div>
           <div v-if="caffeine.show">
-            <span class="nf-highlight" v-html="text.caffeine || 'Caffeine'"></span> {{ caffeine.value }}<span aria-hidden="true">mg</span>
+            <span v-html="text.caffeine || 'Caffeine'"></span> {{ caffeine.value }}<span aria-hidden="true">mg</span>
             <span class="sr-only"> milligrams</span>
           </div>
-      <div v-if="caffeine.show" class="nf-bar2"></div>
+      <div v-if="caffeine.show" class="nf-bar1"></div>
       <div class="nf-footnote">
         <span>
           {{ text.footnote || 'The % Daily Value (DV) tells you how much a nutrient in a serving of food contributes to a daily diet. 2000 calories a day is used for general nutrition advice.' }}
@@ -1094,10 +1094,9 @@ export default {
   &-serving {
     font-size: 1.2em;
     line-height: normal;
-    padding: 3px 0;
-    >div>span {
-      float: left;
-    }
+    padding: 2px 0;
+    clear: both;
+    overflow: auto;
   }
 
   &-serving-size {
@@ -1150,10 +1149,19 @@ export default {
   &-item-name {
     display: table;
     margin-left: 42px;
-    padding-top: 2px;
     min-height: 25px;
     &.read-only {
       margin-left: 0;
+      width: 100%;
+      min-height: 0;
+      .text-serving-size {
+        float: left;
+      }
+      .text-serving-item {
+        float: right;
+        max-width: 160px;
+        text-align: right;
+      }
     }
     > div {
       display: table-cell;
