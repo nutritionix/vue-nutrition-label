@@ -527,7 +527,6 @@ export default {
             return this.roundCholesterol(this.multiplier(value));
 
           case 'potassium':
-            value = value / 100 * this.rdi[nutrient];
             return this.roundPotassium(this.multiplier(value));
 
           case 'caffeine':
@@ -539,7 +538,6 @@ export default {
           case 'vitaminD':
           case 'calcium':
           case 'iron':
-            value = value / 100 * this.rdi[nutrient];
             return this.roundVitaminsMinerals(this.multiplier(value));
 
           // Essentials
