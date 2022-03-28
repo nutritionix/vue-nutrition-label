@@ -26,7 +26,7 @@
           <div class="nf-item-name" :class="{ 'read-only': settings.readOnly }">
             <div v-if="!settings.readOnly">
               {{ servingUnitName }}
-              <template v-if="servingWeight !== 0">
+              <template v-if="settings.showServingWeight">
                 ({{ servingWeight }}g)
               </template>
             </div>
@@ -845,6 +845,9 @@ export default {
         multipleItems: this.hasOption('multipleItems')
           ? this.options.multipleItems
           : false,
+        showServingWeight: this.hasOption('showServingWeight')
+          ? this.options.showServingWeight
+          : 0,
         layout: this.hasOption('layout')
           ? this.options.layout
           : 'US'

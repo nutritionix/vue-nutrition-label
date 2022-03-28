@@ -115,8 +115,9 @@ export default {
       options: {
         width: 280,
         useFdaRounding: 1,
-        readOnly: true,
+        readOnly: false,
         multipleItems: false,
+        showServingWeight: 0,
         layout: 'US',
         locale: {
           nutritionFacts: 'Nutrition Facts',
