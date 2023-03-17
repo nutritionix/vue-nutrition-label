@@ -102,6 +102,7 @@
         </span>
       </div>
       <div class="nf-line nf-indent" v-if="sugars.show">
+        <span class="nf-highlight nf-pr" aria-hidden="true">{{ sugars.dv }}%</span>
         <span v-html="text.sugars || 'Sugars'"></span>
         <span itemprop="sugarContent">
           {{ sugars.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
