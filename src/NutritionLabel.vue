@@ -88,7 +88,7 @@
         </span>
       </div>
       <div class="nf-line" v-if="totalCarb.show">
-        <span class="nf-highlight nf-pr" aria-hidden="true">{{ totalCarb.dv }}%</span>
+        <span class="nf-highlight nf-pr" aria-hidden="true" v-if="settings.countryDV.toLowerCase() !== 'ca'">{{ totalCarb.dv }}%</span>
         <span class="nf-highlight" v-html="text.totalCarb || 'Total Carbohydrates'"></span>
         <span itemprop="carbohydrateContent">
           {{ totalCarb.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
@@ -451,23 +451,23 @@ export default {
         isModified: false
       },
       rdi: {
-        totalFat: { us: 65, uk: 70 },
+        totalFat: { us: 65, uk: 70, ca: 75 },
         saturatedFat: 20,
         cholesterol: 300,
-        sodium: 2400,
+        sodium: { us: 2400, ca: 2300 },
         totalCarb: { us: 300, uk: 260 },
-        fiber: 25,
+        fiber: { us: 25, ca: 28 },
         addedSugars: 50,
         protein: 50,
         vitaminD: 20,
         calcium: 1300,
         iron: 18,
-        potassium: 4700,
+        potassium: { us: 4700, ca: 3400 },
         vitaminA: 5000,
         vitaminC: 60,
         kilojoules: 8400,
         calories: 2000,
-        sugars: { us: 100, uk: 90 },
+        sugars: { us: 100, uk: 90, ca: 100 },
         salt: 6
       }
     };
@@ -566,10 +566,16 @@ export default {
 
     percentDailyValue (nutrient) {
       let unitValue = this.unitValue(nutrient);
-      let layout = this.settings.layout.toLowerCase();
-      let rdi = (typeof this.rdi[nutrient]) === 'object'
-        ? this.rdi[nutrient][layout]
-        : this.rdi[nutrient];
+      let countryDV = this.settings.countryDV.toLowerCase();
+      let rdi = 0;
+
+      if ((typeof this.rdi[nutrient]) === 'object') {
+        rdi = !this.rdi[nutrient][countryDV]
+          ? this.rdi[nutrient]['us']
+          : this.rdi[nutrient][countryDV];
+      } else {
+        rdi = this.rdi[nutrient];
+      }
 
       let dv = this.roundToSpecificDecimalPlace(unitValue / rdi * 100, 0);
 
@@ -850,6 +856,9 @@ export default {
           : 0,
         layout: this.hasOption('layout')
           ? this.options.layout
+          : 'US',
+        countryDV: this.hasOption('countryDV')
+          ? this.options.countryDV
           : 'US'
       };
     },

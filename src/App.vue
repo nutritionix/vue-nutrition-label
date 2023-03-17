@@ -119,6 +119,7 @@ export default {
         multipleItems: false,
         showServingWeight: 0,
         layout: 'US',
+        countryDV: 'US',
         locale: {
           nutritionFacts: 'Nutrition Facts',
           dailyValues: 'Daily Value',
