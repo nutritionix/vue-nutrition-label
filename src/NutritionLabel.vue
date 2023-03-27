@@ -88,7 +88,7 @@
         </span>
       </div>
       <div class="nf-line" v-if="totalCarb.show">
-        <span class="nf-highlight nf-pr" aria-hidden="true" v-if="settings.countryDV.toLowerCase() !== 'ca'">{{ totalCarb.dv }}%</span>
+        <span class="nf-highlight nf-pr" aria-hidden="true" v-if="['ca', 'ca2018'].indexOf(settings.countryDV.toLowerCase()) < 0">{{ totalCarb.dv }}%</span>
         <span class="nf-highlight" v-html="text.totalCarb || 'Total Carbohydrates'"></span>
         <span itemprop="carbohydrateContent">
           {{ totalCarb.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
@@ -452,23 +452,23 @@ export default {
         isModified: false
       },
       rdi: {
-        totalFat: { us: 65, uk: 70, ca: 75 },
+        totalFat: { us: 65, uk: 70, ca2018: 75 },
         saturatedFat: 20,
         cholesterol: 300,
-        sodium: { us: 2400, ca: 2300 },
+        sodium: { us: 2400, ca2018: 2300 },
         totalCarb: { us: 300, uk: 260 },
-        fiber: { us: 25, ca: 28 },
+        fiber: { us: 25, ca2018: 28 },
         addedSugars: 50,
         protein: 50,
         vitaminD: 20,
         calcium: 1300,
         iron: 18,
-        potassium: { us: 4700, ca: 3400 },
+        potassium: { us: 3500, us2018: 4700, ca2018: 3400 },
         vitaminA: 5000,
         vitaminC: 60,
         kilojoules: 8400,
         calories: 2000,
-        sugars: { us: 100, uk: 90, ca: 100 },
+        sugars: { us: 100, uk: 90, ca2018: 100 },
         salt: 6
       }
     };
