@@ -505,11 +505,13 @@ export default {
         },
         calcium: {
           us: 1000,
-          us2018: 1300
+          us2018: 1300,
+          ca2018: 1000
         },
         iron: {
           us: 18,
-          us2018: 18
+          us2018: 18,
+          ca2018: 18
         },
         potassium: {
           us: 3500,
