@@ -1,6 +1,6 @@
 {
   "name": "vue-nutrition-label",
-  "version": "1.5.7",
+  "version": "1.5.8",
   "description": "VueJS component to create a 2018 FDA-style nutrition label",
   "author": "Rohm Malang <rmalang@nutritionix.com>",
   "private": false,
