@@ -82,9 +82,17 @@
             <label>Calcium</label>
             <input type="number" v-model="n.calcium">
           </p>
+          <p v-if="options.calciumMgFor2018.show">
+            <label>Calcium 2018</label>
+            <input type="number" v-model="n.calciumMgFor2018">
+          </p>
           <p v-if="options.iron.show">
             <label>Iron</label>
             <input type="number" v-model="n.iron">
+          </p>
+          <p v-if="options.ironMgFor2018.show">
+            <label>Iron 2018</label>
+            <input type="number" v-model="n.ironMgFor2018">
           </p>
           <p v-if="options.potassium.show">
             <label>Potassium</label>
@@ -119,7 +127,7 @@ export default {
         multipleItems: false,
         showServingWeight: 0,
         layout: 'US',
-        countryDV: 'US',
+        countryDV: 'US2018',
         locale: {
           nutritionFacts: 'Nutrition Facts',
           dailyValues: 'Daily Value',
@@ -162,7 +170,7 @@ export default {
           na: 1
         },
         calcium: {
-          show: 1,
+          show: 0,
           na: 1
         },
         calories: {
@@ -182,15 +190,15 @@ export default {
           na: 1
         },
         iron: {
-          show: 1,
+          show: 0,
           na: 1
         },
         monounsaturatedFat: {
-          show: 0,
+          show: 1,
           na: 1
         },
         polyunsaturatedFat: {
-          show: 0,
+          show: 1,
           na: 1
         },
         potassium: {
@@ -240,6 +248,14 @@ export default {
         vitaminD: {
           show: 1,
           na: 1
+        },
+        calciumMgFor2018: {
+          show: 1,
+          na: 1
+        },
+        ironMgFor2018: {
+          show: 1,
+          na: 1
         }
       },
       item: {
@@ -249,27 +265,29 @@ export default {
         servingUnitName: 'serving',
         ingredientStatement: 'Swiss cheese, American cheese, more cheese and a burger.',
         nutrition: {
-          calories: 523.1247,
-          caffeine: 12.43,
-          fatCalories: 170,
-          totalFat: 48.5941,
-          saturatedFat: 69.3748,
-          transFat: 0,
-          polyunsaturatedFat: 0,
-          monounsaturatedFat: 0,
-          cholesterol: 10,
-          sodium: 780.2844,
-          totalCarb: 7.5555,
-          fiber: 15.1524,
-          sugars: 22.6127,
-          protein: 38.9961,
-          vitaminA: 1,
-          vitaminC: 2,
-          calcium: 35,
-          iron: 1,
-          addedSugars: 0,
-          potassium: 100,
-          vitaminD: 0,
+          calories: 344.2125,
+          caffeine: 103.668,
+          fatCalories: 107.6281,
+          totalFat: 11.9587,
+          saturatedFat: 7.1963,
+          transFat: 0.3626,
+          polyunsaturatedFat: 0.7138,
+          monounsaturatedFat: 2.7126,
+          cholesterol: 39.3031,
+          sodium: 189.2526,
+          totalCarb: 46.5347,
+          fiber: 0.038,
+          sugars: 44.9187,
+          protein: 12.2388,
+          vitaminA: 12.6093,
+          vitaminC: 0.1678,
+          calcium: 0,
+          calciumMgFor2018: 440.8822,
+          iron: 0,
+          ironMgFor2018: 0.1715,
+          addedSugars: 25.9333,
+          potassium: 693.0523,
+          vitaminD: 4.3861,
           servingWeight: 200
         }
       }
