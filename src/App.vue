@@ -82,17 +82,9 @@
             <label>Calcium</label>
             <input type="number" v-model="n.calcium">
           </p>
-          <p v-if="options.calciumMgFor2018.show">
-            <label>Calcium 2018</label>
-            <input type="number" v-model="n.calciumMgFor2018">
-          </p>
           <p v-if="options.iron.show">
             <label>Iron</label>
             <input type="number" v-model="n.iron">
-          </p>
-          <p v-if="options.ironMgFor2018.show">
-            <label>Iron 2018</label>
-            <input type="number" v-model="n.ironMgFor2018">
           </p>
           <p v-if="options.potassium.show">
             <label>Potassium</label>
@@ -170,7 +162,7 @@ export default {
           na: 1
         },
         calcium: {
-          show: 0,
+          show: 1,
           na: 1
         },
         calories: {
@@ -190,7 +182,7 @@ export default {
           na: 1
         },
         iron: {
-          show: 0,
+          show: 1,
           na: 1
         },
         monounsaturatedFat: {

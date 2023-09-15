@@ -158,20 +158,10 @@
             <span class="sr-only"> milligrams</span>
             <span class="nf-pr" aria-hidden="true">{{ calcium.dv }}%</span>
           </div>
-          <div class="nf-vitamin-column" v-if="calciumMgFor2018.show">
-            <span v-html="text.calcium || 'Calcium'"></span> {{ calciumMgFor2018.value }}<span aria-hidden="true">mg</span>
-            <span class="sr-only"> milligrams</span>
-            <span class="nf-pr" aria-hidden="true">{{ calciumMgFor2018.dv }}%</span>
-          </div>
           <div class="nf-vitamin-column" v-if="iron.show">
             <span v-html="text.iron || 'Iron'"></span> {{ iron.value }}<span aria-hidden="true">mg</span>
             <span class="sr-only"> milligrams</span>
             <span class="nf-pr" aria-hidden="true">{{ iron.dv }}%</span>
-          </div>
-          <div class="nf-vitamin-column" v-if="ironMgFor2018.show">
-            <span v-html="text.iron || 'Iron'"></span> {{ ironMgFor2018.value }}<span aria-hidden="true">mg</span>
-            <span class="sr-only"> milligrams</span>
-            <span class="nf-pr" aria-hidden="true">{{ ironMgFor2018.dv }}%</span>
           </div>
           <div class="nf-vitamin-column" v-if="potassium.show">
             <span v-html="text.potassium || 'Potassium'"></span> {{ potassium.value }}<span aria-hidden="true">mg</span>
@@ -596,9 +586,17 @@ export default {
           case 'vitaminC':
           case 'vitaminD':
           case 'calcium':
-          case 'calciumMgFor2018':
           case 'iron':
-          case 'ironMgFor2018':
+            if (this.settings.countryDV.toLowerCase() === 'us2018') {
+              if (nutrient === 'calcium') {
+                value = this.value.nutrition['calciumMgFor2018'];
+              };
+
+              if (nutrient === 'iron') {
+                value = this.value.nutrition['ironMgFor2018'];
+              };
+            };
+
             return this.roundVitaminsMinerals(this.multiplier(value));
 
           // Essentials
@@ -636,14 +634,6 @@ export default {
           : this.rdi[nutrient][countryDV];
       } else {
         rdi = this.rdi[nutrient];
-
-        if (nutrient === 'calciumMgFor2018') {
-          rdi = this.rdi['calcium'][countryDV];
-        }
-
-        if (nutrient === 'ironMgFor2018') {
-          rdi = this.rdi['iron'][countryDV];
-        }
       }
 
       let dv = this.roundToSpecificDecimalPlace(unitValue / rdi * 100, 0);
@@ -674,9 +664,7 @@ export default {
         case 'vitaminD':
         case 'potassium':
         case 'calcium':
-        case 'calciumMgFor2018':
         case 'iron':
-        case 'ironMgFor2018':
           // <1% express as 0
           if (dv < 1) {
             dv = 0;
@@ -1145,15 +1133,6 @@ export default {
         show: this.hasOption(n) ? this.options.calcium.show : 1
       };
     },
-    calciumMgFor2018 () {
-      let n = 'calciumMgFor2018';
-
-      return {
-        value: this.unitValue(n),
-        dv: this.percentDailyValue(n),
-        show: this.hasOption(n) ? this.options.calciumMgFor2018.show : 1
-      };
-    },
     iron () {
       let n = 'iron';
 
@@ -1161,15 +1140,6 @@ export default {
         value: this.unitValue(n),
         dv: this.percentDailyValue(n),
         show: this.hasOption(n) ? this.options.iron.show : 1
-      };
-    },
-    ironMgFor2018 () {
-      let n = 'ironMgFor2018';
-
-      return {
-        value: this.unitValue(n),
-        dv: this.percentDailyValue(n),
-        show: this.hasOption(n) ? this.options.ironMgFor2018.show : 1
       };
     },
     potassium () {
