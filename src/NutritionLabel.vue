@@ -675,6 +675,11 @@ export default {
             dv = 2;
           }
 
+          // <=10% round to nearest 2%
+          if (dv <= 10) {
+            dv = this.roundToNearestNum(dv, 2);
+          }
+
           // >10%-50% round to nearest 5%
           if (dv > 10 && dv <= 50) {
             dv = this.roundToNearestNum(dv, 5);
