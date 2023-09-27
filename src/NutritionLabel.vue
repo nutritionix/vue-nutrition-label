@@ -54,14 +54,14 @@
         <span class="nf-highlight nf-percent-dv">% <span v-html="text.dailyValues || 'Daily Value'"></span>*</span>
       </div>
       <div class="nf-line" v-if="totalFat.show">
-        <span class="nf-highlight nf-pr" aria-hidden="true">{{ totalFat.dv }}%</span>
+        <span v-if="totalFat.showDv" class="nf-highlight nf-pr" aria-hidden="true">{{ totalFat.dv }}%</span>
         <span class="nf-highlight" v-html="text.totalFat || 'Total Fat'"></span>
         <span itemprop="fatContent">
           {{ totalFat.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
       </span>
       </div>
       <div class="nf-line nf-indent" v-if="saturatedFat.show">
-        <span class="nf-highlight nf-pr" aria-hidden="true">{{ saturatedFat.dv }}%</span>
+        <span v-if="saturatedFat.showDv" class="nf-highlight nf-pr" aria-hidden="true">{{ saturatedFat.dv }}%</span>
         <span v-html="text.satFat || 'Saturated Fat'"></span>
         <span itemprop="saturatedFatContent">
           {{ saturatedFat.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
@@ -86,41 +86,42 @@
         </span>
       </div>
       <div class="nf-line" v-if="cholesterol.show">
-        <span class="nf-highlight nf-pr" aria-hidden="true">{{ cholesterol.dv }}%</span>
+        <span v-if="cholesterol.showDv" class="nf-highlight nf-pr" aria-hidden="true">{{ cholesterol.dv }}%</span>
         <span class="nf-highlight" v-html="text.cholesterol || 'Cholesterol'"></span>
         <span itemprop="cholesterolContent">
           {{ cholesterol.value }}<span aria-hidden="true">mg</span><span class="sr-only"> milligrams</span>
         </span>
       </div>
       <div class="nf-line" v-if="sodium.show">
-        <span class="nf-highlight nf-pr" aria-hidden="true">{{ sodium.dv }}%</span>
+        <span v-if="sodium.showDv" class="nf-highlight nf-pr" aria-hidden="true">{{ sodium.dv }}%</span>
         <span class="nf-highlight" v-html="text.sodium || 'Sodium'"></span>
         <span itemprop="sodiumContent">
           {{ sodium.value }}<span aria-hidden="true">mg</span><span class="sr-only"> milligrams</span>
         </span>
       </div>
       <div class="nf-line" v-if="totalCarb.show">
-        <span class="nf-highlight nf-pr" aria-hidden="true" v-if="['ca', 'ca2018'].indexOf(settings.countryDV.toLowerCase()) < 0">{{ totalCarb.dv }}%</span>
+        <span class="nf-highlight nf-pr" aria-hidden="true" v-if="['us', 'us2018'].indexOf(settings.countryDV.toLowerCase()) > 0 && totalCarb.showDv">{{ totalCarb.dv }}%</span>
         <span class="nf-highlight" v-html="text.totalCarb || 'Total Carbohydrates'"></span>
         <span itemprop="carbohydrateContent">
           {{ totalCarb.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
         </span>
       </div>
       <div class="nf-line nf-indent" v-if="fiber.show">
-        <span class="nf-highlight nf-pr" aria-hidden="true">{{ fiber.dv }}%</span>
+        <span v-if="fiber.showDv" class="nf-highlight nf-pr" aria-hidden="true">{{ fiber.dv }}%</span>
         <span v-html="text.fiber || 'Dietary Fiber'"></span>
         <span itemprop="fiberContent">
           {{ fiber.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
         </span>
       </div>
       <div class="nf-line nf-indent" v-if="sugars.show">
+        <span class="nf-highlight nf-pr" aria-hidden="true" v-if="['us', 'us2018'].indexOf(settings.countryDV.toLowerCase()) < 0">{{ sugars.dv }}%</span>
         <span v-html="text.sugars || 'Sugars'"></span>
         <span itemprop="sugarContent">
           {{ sugars.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
         </span>
       </div>
       <div class="nf-line nf-indent2" v-if="addedSugars.show">
-        <span class="nf-highlight nf-pr" aria-hidden="true">{{ addedSugars.dv }}%</span>
+        <span v-if="addedSugars.showDv" class="nf-highlight nf-pr" aria-hidden="true">{{ addedSugars.dv }}%</span>
         <span>
           <span v-html="text.includes || 'Includes'"></span>
           <span itemprop="">{{ addedSugars.value }}<span aria-hidden="true">g</span><span class="sr-only"> grams</span>
@@ -150,22 +151,22 @@
           <div class="nf-vitamin-column" v-if="vitaminD.show">
             <span v-html="text.vitaminD || 'Vitamin D'"></span> {{ vitaminD.value }}<span aria-hidden="true">mcg</span>
             <span class="sr-only"> micrograms</span>
-            <span class="nf-pr" aria-hidden="true">{{ vitaminD.dv }}%</span>
+            <span v-if="vitaminD.showDv" class="nf-pr" aria-hidden="true">{{ vitaminD.dv }}%</span>
           </div>
           <div class="nf-vitamin-column" v-if="calcium.show">
             <span v-html="text.calcium || 'Calcium'"></span> {{ calcium.value }}<span aria-hidden="true">mg</span>
             <span class="sr-only"> milligrams</span>
-            <span class="nf-pr" aria-hidden="true">{{ calcium.dv }}%</span>
+            <span v-if="calcium.showDv" class="nf-pr" aria-hidden="true">{{ calcium.dv }}%</span>
           </div>
           <div class="nf-vitamin-column" v-if="iron.show">
             <span v-html="text.iron || 'Iron'"></span> {{ iron.value }}<span aria-hidden="true">mg</span>
             <span class="sr-only"> milligrams</span>
-            <span class="nf-pr" aria-hidden="true">{{ iron.dv }}%</span>
+            <span v-if="iron.showDv" class="nf-pr" aria-hidden="true">{{ iron.dv }}%</span>
           </div>
           <div class="nf-vitamin-column" v-if="potassium.show">
             <span v-html="text.potassium || 'Potassium'"></span> {{ potassium.value }}<span aria-hidden="true">mg</span>
             <span class="sr-only"> milligrams</span>
-            <span class="nf-pr" aria-hidden="true">{{ potassium.dv }}%</span>
+            <span v-if="potassium.showDv" class="nf-pr" aria-hidden="true">{{ potassium.dv }}%</span>
           </div>
         </div>
       </div>
@@ -495,7 +496,7 @@ export default {
         calcium: {
           us: 1000,
           us2018: 1300,
-          ca2018: 1000
+          ca2018: 1300
         },
         iron: {
           us: 18,
@@ -575,7 +576,12 @@ export default {
             return this.roundCholesterol(this.multiplier(value));
 
           case 'potassium':
-            return this.roundPotassium(this.multiplier(value));
+          case 'calcium':
+            if (nutrient === 'calcium' && this.value.nutrition.hasOwnProperty('calciumMgFor2018')) {
+              value = this.value.nutrition['calciumMgFor2018'];
+            };
+
+            return this.roundCalciumPotassium(this.multiplier(value));
 
           case 'caffeine':
             return this.roundToNearestNum(this.multiplier(value), 1);
@@ -583,20 +589,15 @@ export default {
           // Vitamins and Minerals
           case 'vitaminA':
           case 'vitaminC':
-          case 'vitaminD':
-          case 'calcium':
-          case 'iron':
-            if (this.settings.countryDV.toLowerCase() === 'us2018') {
-              if (nutrient === 'calcium') {
-                value = this.value.nutrition['calciumMgFor2018'];
-              };
+            return this.roundVitaminsMinerals(this.multiplier(value));
 
-              if (nutrient === 'iron') {
-                value = this.value.nutrition['ironMgFor2018'];
-              };
+          case 'vitaminD':
+          case 'iron':
+            if (nutrient === 'iron' && this.value.nutrition.hasOwnProperty('ironMgFor2018')) {
+              value = this.value.nutrition['ironMgFor2018'];
             };
 
-            return this.roundVitaminsMinerals(this.multiplier(value));
+            return this.roundVitaminDIron(this.multiplier(value));
 
           // Essentials
           case 'totalCarb':
@@ -623,7 +624,11 @@ export default {
     },
 
     percentDailyValue (nutrient) {
-      let unitValue = this.unitValue(nutrient);
+      let rawValue;
+      if (this.value.hasOwnProperty('nutrition') && this.value.nutrition.hasOwnProperty(nutrient)) {
+        rawValue = this.value.nutrition[nutrient];
+      };
+
       let countryDV = this.settings.countryDV.toLowerCase();
       let rdi = 0;
 
@@ -635,13 +640,28 @@ export default {
         rdi = this.rdi[nutrient];
       }
 
-      let dv = this.roundToSpecificDecimalPlace(unitValue / rdi * 100, 0);
+      if (nutrient === 'calcium' && this.value.nutrition.hasOwnProperty('calciumMgFor2018')) {
+        rawValue = this.value.nutrition['calciumMgFor2018'];
+      };
+
+      if (nutrient === 'iron' && this.value.nutrition.hasOwnProperty('ironMgFor2018')) {
+        rawValue = this.value.nutrition['ironMgFor2018'];
+      };
+
+      let dv = rawValue / rdi * 100;
 
       switch (nutrient) {
         case 'cholesterol':
-          if (unitValue === '< 5') {
+          if (this.unitValue(nutrient) === '< 5') {
             dv = 0;
+          } else {
+            dv = this.roundToSpecificDecimalPlace(this.unitValue(nutrient) / rdi * 100, 0);
           }
+
+          break;
+
+        case 'sodium':
+          dv = this.roundToSpecificDecimalPlace(dv, 0);
           break;
 
         case 'totalCarb':
@@ -649,9 +669,13 @@ export default {
         case 'sugars':
         case 'addedSugars':
         case 'protein':
-          if (unitValue === '< 1') {
+          if (this.unitValue(nutrient) === '< 1') {
             dv = 0;
+          } else {
+            dv = this.roundToSpecificDecimalPlace(this.unitValue(nutrient) / rdi * 100, 0);
           }
+
+          // console.log(nutrient + 'raw value:' + rawValue + 'unitValue:' + this.unitValue(nutrient) + 'rdi:' + rdi);
           break;
 
         case 'salt':
@@ -688,8 +712,10 @@ export default {
           if (dv > 50) {
             dv = this.roundToNearestNum(dv, 10);
           }
-
           break;
+
+        default:
+          dv = this.roundToSpecificDecimalPlace(this.unitValue(nutrient) / rdi * 100, 0);
       }
 
       return dv;
@@ -806,7 +832,7 @@ export default {
       return this.roundToNearestNum(value, 1);
     },
 
-    // Vitamin D, Calcium and Iron
+    // Vitaminins and Minerals
     roundVitaminsMinerals (value) {
       if (!this.settings.useFdaRounding) {
         return this.roundToSpecificDecimalPlace(value, 1);
@@ -815,8 +841,7 @@ export default {
       if (value > 0) {
         if (value < 10) {
           // < 10 - round to nearest even number
-          // return this.roundToNearestNum(value, 2);
-          return this.roundToSpecificDecimalPlace(value, 1);
+          return this.roundToNearestNum(value, 2);
         } else if (value < 50) {
           // between 10 and 50, round to the nearest 5 increment
           return this.roundToNearestNum(value, 5);
@@ -827,16 +852,24 @@ export default {
       return 0;
     },
 
+    // 2018 Rounding rule for Vitamin D and Iron
+    roundVitaminDIron (value) {
+      // round to the nearest 0.1 increment
+      return this.roundToSpecificDecimalPlace(this.roundToNearestNum(value, 0.1), 1);
+    },
+
+    // 2018 Rounding rule for Calcium and Potassium
+    roundCalciumPotassium (value) {
+      // round to the nearest 10 increment
+      return this.roundToSpecificDecimalPlace(this.roundToNearestNum(value, 10), 1);
+    },
+
     roundToNearestNum (value, nearest) {
       if (!this.settings.useFdaRounding) {
         return this.roundToSpecificDecimalPlace(value, 0);
       }
 
-      value = this.roundToSpecificDecimalPlace(value, 4);
-      if (nearest < 0) {
-        return Math.round(value * nearest) / nearest;
-      }
-      return Math.round(value / nearest) * nearest;
+      return nearest < 0 ? Math.round(value * nearest) / nearest : Math.round(value / nearest) * nearest;
     },
 
     roundToSpecificDecimalPlace (value, decimals) {
@@ -988,7 +1021,8 @@ export default {
         per100: this.per100(n),
         value: this.unitValue(n),
         dv: this.percentDailyValue(n),
-        show: this.hasOption(n) ? this.options.totalFat.show : 1
+        show: this.hasOption(n) ? this.options.totalFat.show : 1,
+        showDv: this.hasOption(n) ? this.options.totalFat.dv : 1
       };
     },
     saturatedFat () {
@@ -998,7 +1032,8 @@ export default {
         per100: this.per100(n),
         value: this.unitValue(n),
         dv: this.percentDailyValue(n),
-        show: this.hasOption(n) ? this.options.saturatedFat.show : 1
+        show: this.hasOption(n) ? this.options.saturatedFat.show : 1,
+        showDv: this.hasOption(n) ? this.options.saturatedFat.dv : 1
       };
     },
     transFat () {
@@ -1031,7 +1066,8 @@ export default {
       return {
         value: this.unitValue(n),
         dv: this.percentDailyValue(n),
-        show: this.hasOption(n) ? this.options.cholesterol.show : 1
+        show: this.hasOption(n) ? this.options.cholesterol.show : 1,
+        showDv: this.hasOption(n) ? this.options.cholesterol.dv : 1
       };
     },
     sodium () {
@@ -1040,7 +1076,8 @@ export default {
       return {
         value: this.unitValue(n),
         dv: this.percentDailyValue(n),
-        show: this.hasOption(n) ? this.options.sodium.show : 1
+        show: this.hasOption(n) ? this.options.sodium.show : 1,
+        showDv: this.hasOption(n) ? this.options.sodium.dv : 1
       };
     },
     salt () {
@@ -1059,7 +1096,8 @@ export default {
         per100: this.per100(n),
         value: this.unitValue(n),
         dv: this.percentDailyValue(n),
-        show: this.hasOption(n) ? this.options.totalCarb.show : 1
+        show: this.hasOption(n) ? this.options.totalCarb.show : 1,
+        showDv: this.hasOption(n) ? this.options.totalCarb.dv : 1
       };
     },
     fiber () {
@@ -1069,7 +1107,8 @@ export default {
         per100: this.per100(n),
         value: this.unitValue(n),
         dv: this.percentDailyValue(n),
-        show: this.hasOption(n) ? this.options.fiber.show : 1
+        show: this.hasOption(n) ? this.options.fiber.show : 1,
+        showDv: this.hasOption(n) ? this.options.fiber.dv : 1
       };
     },
     sugars () {
@@ -1079,7 +1118,8 @@ export default {
         per100: this.per100(n),
         value: this.unitValue(n),
         dv: this.percentDailyValue(n),
-        show: this.hasOption(n) ? this.options.sugars.show : 1
+        show: this.hasOption(n) ? this.options.sugars.show : 1,
+        showDv: this.hasOption(n) ? this.options.sugars.dv : 0
       };
     },
     addedSugars () {
@@ -1088,7 +1128,8 @@ export default {
       return {
         value: this.unitValue(n),
         dv: this.percentDailyValue(n),
-        show: this.hasOption(n) ? this.options.addedSugars.show : 0
+        show: this.hasOption(n) ? this.options.addedSugars.show : 0,
+        showDv: this.hasOption(n) ? this.options.addedSugars.dv : 1
       };
     },
     protein () {
@@ -1098,7 +1139,8 @@ export default {
         per100: this.per100(n),
         value: this.unitValue(n),
         dv: this.percentDailyValue(n),
-        show: this.hasOption(n) ? this.options.protein.show : 1
+        show: this.hasOption(n) ? this.options.protein.show : 1,
+        showDv: this.hasOption(n) ? this.options.protein.dv : 1
       };
     },
     vitaminA () {
@@ -1107,7 +1149,8 @@ export default {
       return {
         value: this.unitValue(n),
         dv: this.percentDailyValue(n),
-        show: this.hasOption(n) ? this.options.vitaminA.show : 0
+        show: this.hasOption(n) ? this.options.vitaminA.show : 0,
+        showDv: this.hasOption(n) ? this.options.vitaminA.dv : 1
       };
     },
     vitaminC () {
@@ -1116,7 +1159,8 @@ export default {
       return {
         value: this.unitValue(n),
         dv: this.percentDailyValue(n),
-        show: this.hasOption(n) ? this.options.vitaminC.show : 0
+        show: this.hasOption(n) ? this.options.vitaminC.show : 0,
+        showDv: this.hasOption(n) ? this.options.vitaminC.dv : 1
       };
     },
     vitaminD () {
@@ -1125,7 +1169,8 @@ export default {
       return {
         value: this.unitValue(n),
         dv: this.percentDailyValue(n),
-        show: this.hasOption(n) ? this.options.vitaminD.show : 1
+        show: this.hasOption(n) ? this.options.vitaminD.show : 1,
+        showDv: this.hasOption(n) ? this.options.vitaminD.dv : 1
       };
     },
     calcium () {
@@ -1134,7 +1179,8 @@ export default {
       return {
         value: this.unitValue(n),
         dv: this.percentDailyValue(n),
-        show: this.hasOption(n) ? this.options.calcium.show : 1
+        show: this.hasOption(n) ? this.options.calcium.show : 1,
+        showDv: this.hasOption(n) ? this.options.calcium.dv : 1
       };
     },
     iron () {
@@ -1143,7 +1189,8 @@ export default {
       return {
         value: this.unitValue(n),
         dv: this.percentDailyValue(n),
-        show: this.hasOption(n) ? this.options.iron.show : 1
+        show: this.hasOption(n) ? this.options.iron.show : 1,
+        showDv: this.hasOption(n) ? this.options.iron.dv : 1
       };
     },
     potassium () {
@@ -1152,7 +1199,8 @@ export default {
       return {
         value: this.unitValue(n),
         dv: this.percentDailyValue(n),
-        show: this.hasOption(n) ? this.options.potassium.show : 1
+        show: this.hasOption(n) ? this.options.potassium.show : 1,
+        showDv: this.hasOption(n) ? this.options.potassium.dv : 1
       };
     },
     caffeine () {

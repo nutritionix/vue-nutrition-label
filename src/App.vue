@@ -80,11 +80,11 @@
           </p>
           <p v-if="options.calcium.show">
             <label>Calcium</label>
-            <input type="number" v-model="n.calcium">
+            <input type="number" v-model="n.calciumMgFor2018">
           </p>
           <p v-if="options.iron.show">
             <label>Iron</label>
-            <input type="number" v-model="n.iron">
+            <input type="number" v-model="n.ironMgFor2018">
           </p>
           <p v-if="options.potassium.show">
             <label>Potassium</label>
@@ -155,7 +155,8 @@ export default {
         },
         addedSugars: {
           show: 1,
-          na: 1
+          na: 1,
+          dv: 1
         },
         caffeine: {
           show: 1,
@@ -163,7 +164,8 @@ export default {
         },
         calcium: {
           show: 1,
-          na: 1
+          na: 1,
+          dv: 1
         },
         calories: {
           show: 1,
@@ -171,7 +173,8 @@ export default {
         },
         cholesterol: {
           show: 1,
-          na: 1
+          na: 1,
+          dv: 1
         },
         fatCalories: {
           show: 0,
@@ -179,11 +182,13 @@ export default {
         },
         fiber: {
           show: 1,
-          na: 1
+          na: 1,
+          dv: 1
         },
         iron: {
           show: 1,
-          na: 1
+          na: 1,
+          dv: 1
         },
         monounsaturatedFat: {
           show: 1,
@@ -195,19 +200,23 @@ export default {
         },
         potassium: {
           show: 1,
-          na: 1
+          na: 1,
+          dv: 1
         },
         protein: {
           show: 1,
-          na: 1
+          na: 1,
+          dv: 1
         },
         saturatedFat: {
           show: 1,
-          na: 1
+          na: 1,
+          dv: 1
         },
         sodium: {
           show: 1,
-          na: 1
+          na: 1,
+          dv: 1
         },
         sugarAlcohol: {
           show: 0,
@@ -215,15 +224,18 @@ export default {
         },
         sugars: {
           show: 1,
-          na: 1
+          na: 1,
+          dv: 1
         },
         totalCarb: {
           show: 1,
-          na: 1
+          na: 1,
+          dv: 1
         },
         totalFat: {
           show: 1,
-          na: 1
+          na: 1,
+          dv: 1
         },
         transFat: {
           show: 1,
@@ -239,7 +251,8 @@ export default {
         },
         vitaminD: {
           show: 1,
-          na: 1
+          na: 1,
+          dv: 1
         },
         calciumMgFor2018: {
           show: 1,
