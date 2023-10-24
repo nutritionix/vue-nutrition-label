@@ -149,22 +149,22 @@
             <span class="nf-pr" aria-hidden="true">{{ vitaminC.dv }}%</span>
           </div>
           <div class="nf-vitamin-column" v-if="vitaminD.show">
-            <span v-html="text.vitaminD || 'Vitamin D'"></span> {{ vitaminD.value }}<span aria-hidden="true">mcg</span>
+            <span v-html="text.vitaminD || 'Vitamin D'"></span> {{ roundToSpecificDecimalPlace(vitaminD.value, 1) }}<span aria-hidden="true">mcg</span>
             <span class="sr-only"> micrograms</span>
             <span v-if="vitaminD.showDv" class="nf-pr" aria-hidden="true">{{ vitaminD.dv }}%</span>
           </div>
           <div class="nf-vitamin-column" v-if="calcium.show">
-            <span v-html="text.calcium || 'Calcium'"></span> {{ calcium.value }}<span aria-hidden="true">mg</span>
+            <span v-html="text.calcium || 'Calcium'"></span> {{ roundToSpecificDecimalPlace(calcium.value, 1) }}<span aria-hidden="true">mg</span>
             <span class="sr-only"> milligrams</span>
             <span v-if="calcium.showDv" class="nf-pr" aria-hidden="true">{{ calcium.dv }}%</span>
           </div>
           <div class="nf-vitamin-column" v-if="iron.show">
-            <span v-html="text.iron || 'Iron'"></span> {{ iron.value }}<span aria-hidden="true">mg</span>
+            <span v-html="text.iron || 'Iron'"></span> {{ roundToSpecificDecimalPlace(iron.value, 1) }}<span aria-hidden="true">mg</span>
             <span class="sr-only"> milligrams</span>
             <span v-if="iron.showDv" class="nf-pr" aria-hidden="true">{{ iron.dv }}%</span>
           </div>
           <div class="nf-vitamin-column" v-if="potassium.show">
-            <span v-html="text.potassium || 'Potassium'"></span> {{ potassium.value }}<span aria-hidden="true">mg</span>
+            <span v-html="text.potassium || 'Potassium'"></span> {{ roundToSpecificDecimalPlace(potassium.value, 1) }}<span aria-hidden="true">mg</span>
             <span class="sr-only"> milligrams</span>
             <span v-if="potassium.showDv" class="nf-pr" aria-hidden="true">{{ potassium.dv }}%</span>
           </div>
@@ -468,6 +468,7 @@ export default {
           us: 65,
           us2018: 78,
           uk: 70,
+          ca: 65,
           ca2018: 75
         },
         saturatedFat: 20,
@@ -475,37 +476,45 @@ export default {
         sodium: {
           us: 2400,
           us2018: 2300,
+          ca: 2400,
           ca2018: 2300
         },
         totalCarb: {
           us: 300,
           us2018: 275,
+          ca: 300,
           uk: 260
         },
         fiber: {
           us: 25,
           us2018: 28,
+          ca: 25,
           ca2018: 28
         },
         addedSugars: 50,
         protein: 50,
         vitaminD: {
-          us: 10,
-          us2018: 20
+          us: 20,
+          us2018: 20,
+          ca: 5,
+          ca2018: 20
         },
         calcium: {
-          us: 1000,
+          us: 1300,
           us2018: 1300,
+          ca: 1100,
           ca2018: 1300
         },
         iron: {
           us: 18,
           us2018: 18,
+          ca: 14,
           ca2018: 18
         },
         potassium: {
           us: 3500,
           us2018: 4700,
+          ca: 3500,
           ca2018: 3400
         },
         vitaminA: 5000,
@@ -675,7 +684,6 @@ export default {
             dv = this.roundToSpecificDecimalPlace(this.unitValue(nutrient) / rdi * 100, 0);
           }
 
-          // console.log(nutrient + 'raw value:' + rawValue + 'unitValue:' + this.unitValue(nutrient) + 'rdi:' + rdi);
           break;
 
         case 'salt':
@@ -688,6 +696,8 @@ export default {
         case 'potassium':
         case 'calcium':
         case 'iron':
+          dv = this.multiplier(rawValue) / rdi * 100;
+
           // <1% express as 0
           if (dv < 1) {
             dv = 0;
@@ -712,6 +722,7 @@ export default {
           if (dv > 50) {
             dv = this.roundToNearestNum(dv, 10);
           }
+
           break;
 
         default:
@@ -854,14 +865,21 @@ export default {
 
     // 2018 Rounding rule for Vitamin D and Iron
     roundVitaminDIron (value) {
+      if (!this.settings.useFdaRounding) {
+        return this.roundToSpecificDecimalPlace(value, 1);
+      }
       // round to the nearest 0.1 increment
-      return this.roundToSpecificDecimalPlace(this.roundToNearestNum(value, 0.1), 1);
+      return this.roundToNearestNum(value, 0.1);
     },
 
     // 2018 Rounding rule for Calcium and Potassium
     roundCalciumPotassium (value) {
+      if (!this.settings.useFdaRounding) {
+        return this.roundToSpecificDecimalPlace(value, 1);
+      }
+
       // round to the nearest 10 increment
-      return this.roundToSpecificDecimalPlace(this.roundToNearestNum(value, 10), 1);
+      return this.roundToNearestNum(value, 10);
     },
 
     roundToNearestNum (value, nearest) {
