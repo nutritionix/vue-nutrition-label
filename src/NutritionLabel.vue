@@ -33,8 +33,7 @@
             <template v-if="settings.readOnly">
               <span class="text-serving-size" v-html="text.servingSize || 'Serving Size'">
               </span>
-              <span class="text-serving-item" v-if="!settings.multipleItems">
-                {{ value.serving }} {{ itemName }}
+              <span class="text-serving-item" v-if="!settings.multipleItems" v-html="value.serving + ' ' + itemName">
               </span>
               <span v-if="settings.multipleItems" v-html="text.multipleItems || 'Multiple items'">
               </span>
