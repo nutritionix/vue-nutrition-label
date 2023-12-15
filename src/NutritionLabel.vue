@@ -35,7 +35,7 @@
               </span>
               <span class="text-serving-item" v-if="!settings.multipleItems" v-html="value.serving + ' ' + itemName">
               </span>
-              <span v-if="settings.multipleItems" v-html="text.multipleItems || 'Multiple items'">
+              <span class="nf-pr" v-if="settings.multipleItems" v-html="text.multipleItems || 'Multiple items'">
               </span>
             </template>
           </div>
