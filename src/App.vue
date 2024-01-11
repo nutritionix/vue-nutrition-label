@@ -115,11 +115,12 @@ export default {
       options: {
         width: 280,
         useFdaRounding: 1,
-        readOnly: false,
+        readOnly: true,
         multipleItems: false,
         showServingWeight: 0,
         layout: 'US',
         countryDV: 'US2018',
+        staticServingAndUnitText: '',
         locale: {
           nutritionFacts: 'Nutrition Facts',
           dailyValues: 'Daily Value',

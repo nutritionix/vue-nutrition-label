@@ -33,7 +33,9 @@
             <template v-if="settings.readOnly">
               <span class="text-serving-size" v-html="text.servingSize || 'Serving Size'">
               </span>
-              <span class="text-serving-item" v-if="!settings.multipleItems" v-html="value.serving + ' ' + itemName">
+              <span class="text-serving-item" v-if="!settings.multipleItems && settings.staticServingAndUnitText === ''" v-html="value.serving + ' ' + itemName">
+              </span>
+              <span class="text-serving-item" v-if="settings.staticServingAndUnitText !== '' && !settings.multipleItems" v-html="settings.staticServingAndUnitText">
               </span>
               <span class="nf-pr" v-if="settings.multipleItems" v-html="text.multipleItems || 'Multiple items'">
               </span>
@@ -1001,7 +1003,10 @@ export default {
           : 'US',
         countryDV: this.hasOption('countryDV')
           ? this.options.countryDV
-          : 'US'
+          : 'US',
+        staticServingAndUnitText: this.hasOption('staticServingAndUnitText')
+          ? this.options.staticServingAndUnitText
+          : ''
       };
     },
     itemName () {
