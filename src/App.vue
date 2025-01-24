@@ -7,6 +7,14 @@
       <div class="col1">
         <form>
           <p>
+            <label>Use ml on UK &amp; Canada</label>
+            <input type="checkbox" v-model="item.useMlOnUkLabel">
+          </p>
+          <p>
+            <label>Serving Per Container</label>
+            <input type="number" v-model="item.servingPerContainer">
+          </p>
+          <p>
             <label>Serving Weight</label>
             <input type="number" v-model="n.servingWeight">
           </p>
@@ -97,10 +105,16 @@
         </form>
       </div>
       <div class="col2">
+        <h3>US</h3>
         <nutrition-label :options="options" v-model="item"></nutrition-label>
       </div>
       <div class="col3">
+        <h3>UK</h3>
         <nutrition-label :options="ukOptions" v-model="item"></nutrition-label>
+      </div>
+      <div class="col2">
+        <h3>Canada</h3>
+        <nutrition-label :options="caOptions" v-model="item"></nutrition-label>
       </div>
     </div>
   </div>
@@ -117,7 +131,7 @@ export default {
         useFdaRounding: 1,
         readOnly: true,
         multipleItems: false,
-        showServingWeight: 0,
+        showServingWeight: 1,
         layout: 'US',
         countryDV: 'US2018',
         staticServingAndUnitText: '',
@@ -220,7 +234,7 @@ export default {
           dv: 1
         },
         sugarAlcohol: {
-          show: 0,
+          show: 1,
           na: 1
         },
         sugars: {
@@ -269,7 +283,9 @@ export default {
         serving: 1,
         servingPerContainer: 1,
         servingUnitName: 'serving',
+        servingUnitNameTranslation: 'portion',
         ingredientStatement: 'Swiss cheese, American cheese, more cheese and a burger.',
+        useMilliliter: 1, // Applies to UK and Canadal label only
         nutrition: {
           calories: 344.2125,
           caffeine: 103.668,
@@ -307,6 +323,13 @@ export default {
       options.locale.nutritionFacts = 'Nutrition';
       return options;
     },
+    caOptions () {
+      let options = JSON.parse(JSON.stringify(this.options));
+      options.width = 300;
+      options.layout = 'CA';
+      options.locale.nutritionFacts = 'Nutrition';
+      return options;
+    },
     n () {
       return this.item.nutrition;
     }
@@ -323,13 +346,16 @@ export default {
   .nf {
     margin: 0 auto;
   }
+  form {
+    padding-top: 60px;
+  }
   form, form * {
     font-size: 12px;
   }
   form label {
     display: block;
     float: left;
-    width: 130px;
+    width: 140px;
     padding: 5px 10px 0 0;
     text-align: right;
   }
@@ -346,7 +372,7 @@ export default {
   .wrap {
     clear: both;
     margin: 0 auto;
-    width: 1000px;
+    width: 1340px;
   }
   .col1, .col2, .col3 {
     float: left;
@@ -360,5 +386,7 @@ export default {
   .col3 {
     width: 400px
   }
-
+  h3 {
+    text-align: center;
+  }
 </style>
