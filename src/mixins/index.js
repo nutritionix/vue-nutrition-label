@@ -135,11 +135,25 @@ export const main = {
           case 'monounsaturatedFat':
           case 'polyunsaturatedFat':
           case 'saturatedFat':
-            return layout === 'uk'
-              ? this.ukRound(nutrient, this.multiplier(value))
-              : this.roundFats(this.multiplier(value));
+            if (this.isUK) {
+              return this.ukRound(nutrient, this.multiplier(value));
+            }
+
+            if (this.isCanada) {
+              if (nutrient === 'totalFat' || nutrient === 'transFat' || nutrient === 'saturatedFat') {
+                return this.roundFatsForCanada(this.multiplier(value));
+              }
+
+              return this.roundUnsaturatedFatsForCanada(this.multiplier(value));
+            }
+
+            return this.roundFats(this.multiplier(value));
 
           case 'sodium':
+            if (this.isCanada) {
+              return this.roundSodiumForCanada(this.multiplier(value));
+            }
+
             return this.roundSodium(this.multiplier(value));
 
           case 'salt':
@@ -154,6 +168,10 @@ export const main = {
             if (nutrient === 'calcium' && this.value.nutrition.hasOwnProperty('calciumMgFor2018')) {
               value = this.value.nutrition['calciumMgFor2018'];
             };
+
+            if (this.isCanada) {
+              return this.roundCalciumPotassiumForCanada(this.multiplier(value));
+            }
 
             return this.roundCalciumPotassium(this.multiplier(value));
 
@@ -171,6 +189,16 @@ export const main = {
               value = this.value.nutrition['ironMgFor2018'];
             };
 
+            if (this.isCanada) {
+              if (nutrient === 'vitaminD') {
+                return this.roundVitaminDForCanada(this.multiplier(value));
+              }
+
+              if (nutrient === 'iron') {
+                return this.roundIronForCanada(this.multiplier(value));
+              }
+            }
+
             return this.roundVitaminDIron(this.multiplier(value));
 
           // Essentials
@@ -179,9 +207,17 @@ export const main = {
           case 'sugars':
           case 'addedSugars':
           case 'protein':
-            return layout === 'uk'
-              ? this.ukRound(nutrient, this.multiplier(value))
-              : this.roundEssentials(this.multiplier(value));
+            if (this.isUK) {
+              return this.ukRound(nutrient, this.multiplier(value));
+            }
+
+            if (this.isCanada) {
+              if (nutrient === 'sugars') {
+                return this.roundEssentialsForCanada(this.multiplier(value));
+              }
+            }
+
+            return this.roundEssentials(this.multiplier(value));
 
           case 'servingWeight':
             return this.servingUnitName.toLowerCase() === 'serving'
@@ -265,7 +301,13 @@ export const main = {
 
           // <1% express as 0
           if (dv < 1) {
-            dv = 0;
+            if (this.isCanada) {
+              if ((nutrient === 'iron' && dv >= 0.2777) || (nutrient === 'calcium' && dv >= 0.3846)) {
+                dv = this.roundToNearestNum(dv, 1);
+              }
+            } else {
+              dv = 0;
+            }
           }
 
           // =1%-2% express as 2%
@@ -323,6 +365,10 @@ export const main = {
       }
 
       if (value < 5) {
+        if (this.isCanada) {
+          return this.roundToNearestNum(value, 1);
+        }
+
         return 0;
       } else if (value <= 50) {
         // 50 cal - express to nearest 5 cal increment
@@ -344,6 +390,46 @@ export const main = {
         return this.roundToNearestNum(value, 0.5);
       }
       // >= 5 g - express to nearest 1 g increment
+      return this.roundToNearestNum(value, 1);
+    },
+
+    // Fats - Canada
+    roundFatsForCanada (value) {
+      if (!this.settings.useFdaRounding) {
+        return this.roundToSpecificDecimalPlace(value, 0);
+      }
+
+      // < .5 g - express to nearest .1g increment
+      if (value < 0.5) {
+        return this.roundToSpecificDecimalPlace(this.roundToNearestNum(value, 0.1), 1);
+      }
+
+      // <= 5 g - express to nearest .5g increment
+      if (value <= 5) {
+        return this.roundToNearestNum(value, 0.5);
+      }
+
+      // > 5 g - express to nearest 1g increment
+      return this.roundToNearestNum(value, 1);
+    },
+
+    // Unsaturated Fats - Canada
+    roundUnsaturatedFatsForCanada (value) {
+      if (!this.settings.useFdaRounding) {
+        return this.roundToSpecificDecimalPlace(value, 0);
+      }
+
+      // < 1 g - express to nearest .1g increment
+      if (value < 1) {
+        return this.roundToSpecificDecimalPlace(this.roundToNearestNum(value, 0.1), 1);
+      }
+
+      // <= 5 g - express to nearest .5g increment
+      if (value <= 5) {
+        return this.roundToNearestNum(value, 0.5);
+      }
+
+      // > 5 g - express to nearest 1g increment
       return this.roundToNearestNum(value, 1);
     },
 
@@ -376,6 +462,25 @@ export const main = {
       return this.roundToNearestNum(value, 10);
     },
 
+    roundSodiumForCanada (value) {
+      if (!this.settings.useFdaRounding) {
+        return this.roundToSpecificDecimalPlace(value, 0);
+      }
+
+      // < 5 g - express to nearest 1g increment
+      if (value < 5) {
+        return this.roundToNearestNum(value, 1);
+      }
+
+      // 5 - 140 mg - express to nearest 5mg increment
+      if (value <= 140) {
+        return this.roundToNearestNum(value, 5);
+      }
+
+      // > 140 mg - express to nearest 10g increment
+      return this.roundToNearestNum(value, 10);
+    },
+
     roundPotassium (value) {
       if (!this.settings.useFdaRounding) {
         return this.roundToSpecificDecimalPlace(value, 0);
@@ -401,8 +506,12 @@ export const main = {
       if (value < 0.5) {
         return 0;
       } else if (value < 1) {
-        // < 1 g - express as "Contains less than 1g" or "less than 1g"
-        return '< 1';
+        if (this.isCanada) {
+          return this.roundToNearestNum(value, 1);
+        } else {
+          // < 1 g - express as "Contains less than 1g" or "less than 1g"
+          return '< 1';
+        }
       }
       // > 1 mg - express to nearest 1 g increment
       return this.roundToNearestNum(value, 1);
@@ -433,8 +542,57 @@ export const main = {
       if (!this.settings.useFdaRounding) {
         return this.roundToSpecificDecimalPlace(value, 1);
       }
+
       // round to the nearest 0.1 increment
       return this.roundToNearestNum(value, 0.1);
+    },
+
+    // Vitamin D - Canada
+    roundVitaminDForCanada (value) {
+      if (!this.settings.useFdaRounding) {
+        return this.roundToSpecificDecimalPlace(value, 1);
+      }
+
+      if (value < 0.1) {
+        return 0;
+      }
+
+      // < 1 mcg - express to nearest .2mcg increment
+      if (value < 1) {
+        return this.roundToNearestNum(value, 0.2);
+      }
+
+      // < 5 mcg - express to nearest .5mcg increment
+      if (value < 5) {
+        return this.roundToNearestNum(value, 0.5);
+      }
+
+      // >= 5 mcg - express to nearest 1mcg increment
+      return this.roundToNearestNum(value, 1);
+    },
+
+    // Iron - Canada
+    roundIronForCanada (value) {
+      if (!this.settings.useFdaRounding) {
+        return this.roundToSpecificDecimalPlace(value, 1);
+      }
+
+      if (value < 0.05) {
+        return 0;
+      }
+
+      // < .5 mcg - express to nearest .1mcg increment
+      if (value < 0.5) {
+        return this.roundToNearestNum(value, 0.1);
+      }
+
+      // < 2.5 mcg - express to nearest .25mcg increment
+      if (value < 2.5) {
+        return this.roundToNearestNum(value, 0.25);
+      }
+
+      // >= 2.5 mcg - express to nearest .5mcg increment
+      return this.roundToNearestNum(value, 0.5);
     },
 
     // 2018 Rounding rule for Calcium and Potassium
@@ -445,6 +603,45 @@ export const main = {
 
       // round to the nearest 10 increment
       return this.roundToNearestNum(value, 10);
+    },
+
+    // Calcium and Potassium - Canada
+    roundCalciumPotassiumForCanada (value) {
+      if (!this.settings.useFdaRounding) {
+        return this.roundToSpecificDecimalPlace(value, 1);
+      }
+
+      if (value < 5) {
+        return 0;
+      }
+
+      // < 50 g - express to nearest 10mg increment
+      if (value < 50) {
+        return this.roundToNearestNum(value, 10);
+      }
+
+      // < 250 g - express to nearest 25mg increment
+      if (value < 250) {
+        return this.roundToNearestNum(value, 25);
+      }
+
+      // >= 250 g - express to nearest 50mg increment
+      return this.roundToNearestNum(value, 50);
+    },
+
+    // Carb, Protein, Fiber, Sugar - Canada
+    roundEssentialsForCanada (value) {
+      if (!this.settings.useFdaRounding) {
+        return this.roundToSpecificDecimalPlace(value, 0);
+      }
+
+      // < .5 g - express to nearest .5g increment
+      if (value < 0.5) {
+        return 0;
+      }
+
+      // >= 5 g - express to nearest 1g increment
+      return this.roundToSpecificDecimalPlace(value, 1);
     },
 
     roundToNearestNum (value, nearest) {
@@ -825,6 +1022,16 @@ export const main = {
     },
     setServingUnit () {
       return this.useMlOnUkLabel ? 'ml' : 'g';
+    },
+    isUK () {
+      return this.settings.layout.toLowerCase() === 'uk';
+    },
+    isCanada () {
+      return this.settings.layout.toLowerCase() === 'ca';
     }
+  },
+
+  updated () {
+    this.$emit('getServingQuantity', this.serving.value);
   }
 };

@@ -1,39 +1,37 @@
 <template>
   <div>
     <div class="nf-header-wrap">
-      <div class="nf-title">
-        Nutrition Facts<br />
-        Valeur Nutritive
+      <div class="nf-title" v-html="text.nutritionFacts || 'Nutrition Facts <br /> Valeur Nutritive'">
       </div>
       <div class="nf-servings-wrap">
         <template v-if="servingPerContainer >= 1">
           <div>
-            Serving Size {{ serving.value }} {{ servingUnitName }}
+            {{ text.servingSize || 'Serving Size' }} {{ serving.value }} {{ servingUnitName }}
             <template v-if="settings.showServingWeight">
               ({{ servingWeight }}{{setServingUnit}})
             </template>
             /
-            Portion {{ serving.value }} {{ servingUnitNameTranslation }}
+            {{ text.servingSizeSecondaryLanguage || 'Portion' }} {{ serving.value }} {{ servingUnitNameTranslation }}
             <template v-if="settings.showServingWeight">
               ({{ servingWeight }}{{setServingUnit}})
             </template>
           </div>
           <div>
-            Serving Per Container {{ servingPerContainer }}
+            {{ text.servingsPerContainer || 'Serving Per Container' }} {{ servingPerContainer }}
           </div>
           <div>
-            Portions par contenant {{ servingPerContainer }}
+            {{ text.servingsPerContainerSecondaryLanguage || 'Portions par contenant' }} {{ servingPerContainer }}
           </div>
         </template>
         <template v-if="servingPerContainer < 1">
           <div>
-            Per {{ serving.value }} {{ servingUnitName }}
+            {{ text.servingSize || 'Per' }} {{ serving.value }} {{ servingUnitName }}
             <template v-if="settings.showServingWeight">
               ({{ servingWeight }}{{setServingUnit}})
             </template>
           </div>
           <div>
-            pour {{ serving.value }} {{ servingUnitNameTranslation }}
+            {{ text.servingsPerContainerSecondaryLanguage || 'Pour' }} {{ serving.value }} {{ servingUnitNameTranslation }}
             <template v-if="settings.showServingWeight">
               ({{ servingWeight }}{{setServingUnit}})
             </template>
@@ -47,128 +45,122 @@
         <span itemprop="calories">{{ calories.value }}</span>
       </div>
       <div class="nf-highlight nf-percent-dv nf-text-right">
-        <div>% Daily Value*</div>
+        <div>% {{ text.dailyValues }}*</div>
         <div>% valeur quotidienne*</div>
       </div>
     </div>
     <div class="nf-no-line" v-if="totalFat.show">
       <span v-if="totalFat.showDv" class="nf-pr" aria-hidden="true">{{ totalFat.dv }} %</span>
-      <span class="nf-highlight">Fat / Lipides</span>
+      <span class="nf-highlight" v-html="text.totalFat || 'Fat / Lipides'"></span>
       <span itemprop="fatContent">
         {{ totalFat.value }}<span aria-hidden="true"> g</span><span class="sr-only"> grams</span>
       </span>
     </div>
     <div class="nf-no-line nf-indent" v-if="saturatedFat.show">
       <span v-if="saturatedFat.showDv" class="nf-pr" aria-hidden="true">{{ saturatedFat.dv }} %</span>
-      <span>Saturated / saturés</span>
+      <span v-html="text.satFat || 'Satured Fat / saturés'"></span>
       <span itemprop="saturatedFatContent">
         {{ saturatedFat.value }}<span aria-hidden="true"> g</span><span class="sr-only"> grams</span>
       </span>
     </div>
     <div class="nf-no-line nf-indent" v-if="transFat.show">
-      <span>+ Trans / trans</span>
+      <span v-html="text.transFat || '+ Trans / trans'"></span>
       <span itemprop="transFatContent">
         {{ transFat.value }}<span aria-hidden="true"> g</span><span class="sr-only"> grams</span>
       </span>
     </div>
     <div class="nf-no-line nf-indent" v-if="polyunsaturatedFat.show">
-      <span>Polyunsaturated / polyinsaturés</span>
+      <span v-html="text.polyFat || 'Polyunsaturated / polyinsaturés'"></span>
       <span itemprop="unsaturatedFatContent">
         {{ polyunsaturatedFat.value }}<span aria-hidden="true"> g</span><span class="sr-only"> grams</span>
       </span>
     </div>
     <div class="nf-no-line nf-indent" v-if="monounsaturatedFat.show">
-      <span>Monounsaturated / monoinsaturés</span>
+      <span v-html="text.monoFat || 'Monounsaturated / monoinsaturés'"></span>
       <span itemprop="unsaturatedFatContent">
         {{ monounsaturatedFat.value }}<span aria-hidden="true"> g</span><span class="sr-only"> grams</span>
       </span>
     </div>
     <div class="nf-line" v-if="totalCarb.show">
       <div class="nf-no-line">
-        <span class="nf-highlight">Carbohydrate / Glucides</span>
+        <span class="nf-highlight" v-html="text.totalCarb || 'Carbohydrate / Glucides'"></span>
         <span itemprop="carbohydrateContent">
           {{ totalCarb.value }}<span aria-hidden="true"> g</span><span class="sr-only"> grams</span>
         </span>
       </div>
       <div class="nf-no-line nf-indent" v-if="fiber.show">
         <span v-if="fiber.showDv" class="nf-pr" aria-hidden="true">{{ fiber.dv }} %</span>
-        <span>Fibre / Fibres</span>
+        <span v-html="text.fiber || 'Fibre / Fibres'">Fibre / Fibres</span>
         <span itemprop="fiberContent">
           {{ fiber.value }}<span aria-hidden="true"> g</span><span class="sr-only"> grams</span>
         </span>
       </div>
       <div class="nf-no-line nf-indent" v-if="sugars.show">
         <span class="nf-pr" aria-hidden="true">{{ sugars.dv }} %</span>
-        <span>Sugars / Sucres</span>
+        <span v-html="text.sugars || 'Sugars / Sucres'"></span>
         <span itemprop="sugarContent">
           {{ sugars.value }}<span aria-hidden="true"> g</span><span class="sr-only"> grams</span>
         </span>
       </div>
       <div class="nf-no-line nf-indent" v-if="sugarAlcohol.show">
-        <span>Sugar Alcohols / Polyalcools</span>
+        <span v-html="text.sugarAlcohol || 'Sugar Alcohols / Polyalcools'"></span>
         {{ sugarAlcohol.value }}<span aria-hidden="true"> g</span><span class="sr-only"> grams</span>
       </div>
     </div>
     <div class="nf-line" v-if="protein.show">
-      <span class="nf-highlight">Protein / Protéines</span>
+      <span class="nf-highlight" v-html="text.protein || 'Protein / Protéines'"></span>
       <span itemprop="proteinContent">
         {{ protein.value }}<span aria-hidden="true"> g</span><span class="sr-only"> grams</span>
       </span>
     </div>
     <div class="nf-line" v-if="cholesterol.show">
-      <span class="nf-highlight">Cholesterol / Cholestérol</span>
-      <span itemprop="proteinContent">
+      <span v-if="cholesterol.showDv" class="nf-pr" aria-hidden="true">{{ cholesterol.dv }}%</span>
+      <span class="nf-highlight" v-html="text.cholesterol || 'Cholesterol / Cholestérol'"></span>
+      <span itemprop="cholesterolContent">
         {{ cholesterol.value }}<span aria-hidden="true"> mg</span><span class="sr-only"> milligrams</span>
       </span>
     </div>
     <div class="nf-line" v-if="sodium.show">
       <span v-if="sodium.showDv" class="nf-pr" aria-hidden="true">{{ sodium.dv }} %</span>
-      <span class="nf-highlight">Sodium</span>
+      <span class="nf-highlight" v-html="text.sodium || 'Sodium'">Sodium</span>
       <span itemprop="sodiumContent">
         {{ sodium.value }}<span aria-hidden="true"> mg</span><span class="sr-only"> milligrams</span>
       </span>
     </div>
     <div class="nf-bar1"></div>
     <div class="nf-line" v-if="potassium.show">
-      <span>Potassium</span> {{ roundToSpecificDecimalPlace(potassium.value, 1) }}<span aria-hidden="true"> mg</span>
+      <span v-html="text.potassium || 'Potassium'"></span> {{ roundToSpecificDecimalPlace(potassium.value, 1) }}<span aria-hidden="true"> mg</span>
       <span class="sr-only"> milligrams</span>
       <span v-if="potassium.showDv" class="nf-pr" aria-hidden="true">{{ potassium.dv }} %</span>
     </div>
     <div class="nf-line" v-if="calcium.show">
-      <span>Calcium</span> {{ roundToSpecificDecimalPlace(calcium.value, 1) }}<span aria-hidden="true"> mg</span>
+      <span v-html="text.calcium || 'Calcium'">m</span> {{ roundToSpecificDecimalPlace(calcium.value, 1) }}<span aria-hidden="true"> mg</span>
       <span class="sr-only"> milligrams</span>
       <span v-if="calcium.showDv" class="nf-pr" aria-hidden="true">{{ calcium.dv }} %</span>
     </div>
     <div class="nf-line" v-if="iron.show">
-      <span>Iron / Fer</span> {{ roundToSpecificDecimalPlace(iron.value, 1) }}<span aria-hidden="true"> mg</span>
+      <span v-html="text.iron || 'Iron / Fer'"></span> {{ roundToSpecificDecimalPlace(iron.value, 1) }}<span aria-hidden="true"> mg</span>
       <span class="sr-only"> milligrams</span>
       <span v-if="iron.showDv" class="nf-pr" aria-hidden="true">{{ iron.dv }} %</span>
     </div>
     <div class="nf-line" v-if="vitaminA.show">
-      <span>Vitamin A / Vitamine A</span> {{ vitaminA.value }}<span aria-hidden="true"> IU</span>
+      <span v-html="text.vitaminA || 'Vitamin A / Vitamine A'"></span> {{ vitaminA.value }}<span aria-hidden="true"> IU</span>
       <span class="sr-only"> International Unit</span>
       <span class="nf-pr" aria-hidden="true">{{ vitaminA.dv }} %</span>
     </div>
     <div class="nf-line" v-if="vitaminC.show">
-      <span>Vitamin C / Vitamine C</span> {{ vitaminC.value }}<span aria-hidden="true"> mg</span>
+      <span v-html="text.vitaminC || 'Vitamin C / Vitamine C'"></span> {{ vitaminC.value }}<span aria-hidden="true"> mg</span>
       <span class="sr-only"> milligrams</span>
       <span class="nf-pr" aria-hidden="true">{{ vitaminC.dv }} %</span>
     </div>
     <div class="nf-line" v-if="vitaminD.show">
-      <spaN>Vitamin D / Vitamine D</span> {{ roundToSpecificDecimalPlace(vitaminD.value, 1) }}<span aria-hidden="true"> mcg</span>
+      <span v-html="text.vitaminD || 'Vitamin D / Vitamine D'"></span> {{ roundToSpecificDecimalPlace(vitaminD.value, 1) }}<span aria-hidden="true"> mcg</span>
       <span class="sr-only"> micrograms</span>
       <span v-if="vitaminD.showDv" class="nf-pr" aria-hidden="true">{{ vitaminD.dv }} %</span>
     </div>
     <div class="nf-bar1"></div>
     <div class="nf-footer">
-      <div>
-        * 5% or less is <strong>a little</strong>, 15% or more is
-        <strong>a lot</strong>
-      </div>
-      <div>
-        * 5% ou mmoins c'est <strong>peu</strong>, 15% ou plus c'est
-        <strong>beaucoup</strong>
-      </div>
+      <div v-html="text.textDailyValueFootnote || ''"></div>
       <div>
           <strong v-html="(text.ingredients || 'INGREDIENTS') + ':'"></strong>
           <div v-html="ingredientStatement"></div>

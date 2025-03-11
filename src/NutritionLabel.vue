@@ -6,15 +6,15 @@
     :style="{ width: settings.width }">
     <!-- US -->
     <template v-if="setLayout('us')">
-      <nfp-us :options="options" v-model="value"></nfp-us>
+      <nfp-us :options="options" v-model="value" @getServingQuantity="setServing($event)"></nfp-us>
     </template>
     <!-- UK -->
     <template v-if="setLayout('uk')">
-      <nfp-uk :options="options" v-model="value"></nfp-uk>
+      <nfp-uk :options="options" v-model="value" @getServingQuantity="setServing($event)"></nfp-uk>
     </template>
     <!-- CA -->
     <template v-if="setLayout('ca')">
-      <nfp-ca :options="options" v-model="value"></nfp-ca>
+      <nfp-ca :options="options" v-model="value" @getServingQuantity="setServing($event)"></nfp-ca>
     </template>
   </div>
 </template>
@@ -46,12 +46,21 @@ export default {
     }
   },
 
+  data () {
+    return {
+      serving: this.value.serving
+    };
+  },
+
   methods: {
     hasOption (key) {
       return this.options.hasOwnProperty(key);
     },
     setLayout (country) {
       return this.settings.layout.toLowerCase() === country;
+    },
+    setServing (val) {
+      this.serving = val;
     }
   },
 
