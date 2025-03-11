@@ -20,87 +20,87 @@
           </p>
           <p v-if="options.calories.show">
             <label>Calories</label>
-            <input type="number" v-model="n.calories">
+            <input type="number" step=".01" v-model="n.calories">
           </p>
           <p v-if="options.fatCalories.show">
             <label>Calories from Fat</label>
-            <input type="number" v-model="n.fatCalories">
+            <input type="number" step=".01"  v-model="n.fatCalories">
           </p>
           <p v-if="options.totalFat.show">
             <label>Total Fat</label>
-            <input type="number" v-model="n.totalFat">
+            <input type="number" step=".01" v-model="n.totalFat">
           </p>
           <p v-if="options.saturatedFat.show">
             <label>Saturated Fat</label>
-            <input type="number" v-model="n.saturatedFat">
+            <input type="number" step=".01" v-model="n.saturatedFat">
           </p>
           <p v-if="options.transFat.show">
             <label>Trans Fat</label>
-            <input type="number" v-model="n.transFat">
+            <input type="number" step=".01" v-model="n.transFat">
           </p>
           <p v-if="options.polyunsaturatedFat.show">
             <label>Polyunsaturated Fat</label>
-            <input type="number" v-model="n.polyunsaturatedFat">
+            <input type="number" step=".01" v-model="n.polyunsaturatedFat">
           </p>
           <p v-if="options.monounsaturatedFat.show">
             <label>Monounsaturated Fat</label>
-            <input type="number" v-model="n.monounsaturatedFat">
+            <input type="number" step=".01" v-model="n.monounsaturatedFat">
           </p>
           <p v-if="options.cholesterol.show">
             <label>Cholesterol</label>
-            <input type="number" v-model="n.cholesterol">
+            <input type="number" step=".01" v-model="n.cholesterol">
           </p>
           <p v-if="options.sodium.show">
             <label>Sodium</label>
-            <input type="number" v-model="n.sodium">
+            <input type="number" step=".01" v-model="n.sodium">
           </p>
           <p v-if="options.totalCarb.show">
             <label>Carbohydrate</label>
-            <input type="number" v-model="n.totalCarb">
+            <input type="number" step=".01" v-model="n.totalCarb">
           </p>
           <p v-if="options.fiber.show">
             <label>Fiber</label>
-            <input type="number" v-model="n.fiber">
+            <input type="number" step=".01" v-model="n.fiber">
           </p>
           <p v-if="options.sugars.show">
             <label>Sugars</label>
-            <input type="number" v-model="n.sugars">
+            <input type="number" step=".01" v-model="n.sugars">
           </p>
           <p v-if="options.addedSugars.show">
             <label>Added Sugars</label>
-            <input type="number" v-model="n.addedSugars">
+            <input type="number" step=".01" v-model="n.addedSugars">
           </p>
           <p v-if="options.protein.show">
             <label>Protein</label>
-            <input type="number" v-model="n.protein">
+            <input type="number" step=".01" v-model="n.protein">
           </p>
           <p v-if="options.vitaminA.show">
             <label>Vitamin A</label>
-            <input type="number" v-model="n.vitaminA">
+            <input type="number" step=".01" v-model="n.vitaminA">
           </p>
           <p v-if="options.vitaminC.show">
             <label>Vitamin C</label>
-            <input type="number" v-model="n.vitaminC">
+            <input type="number" step=".01" v-model="n.vitaminC">
           </p>
           <p v-if="options.vitaminD.show">
             <label>Vitamin D</label>
-            <input type="number" v-model="n.vitaminD">
+            <input type="number" step=".01" v-model="n.vitaminD">
           </p>
           <p v-if="options.calcium.show">
             <label>Calcium</label>
-            <input type="number" v-model="n.calciumMgFor2018">
+            <input type="number" step=".01" v-model="n.calciumMgFor2018">
           </p>
           <p v-if="options.iron.show">
             <label>Iron</label>
-            <input type="number" v-model="n.ironMgFor2018">
+            <input type="number" step=".01" v-model="n.ironMgFor2018">
           </p>
           <p v-if="options.potassium.show">
             <label>Potassium</label>
-            <input type="number" v-model="n.potassium">
+            <input type="number" step=".01" v-model="n.potassium">
           </p>
           <p v-if="options.caffeine.show">
             <label>Caffeine</label>
-            <input type="number" v-model="n.caffeine">
+            <input type="number" step=".01" v-model="n.caffeine">
           </p>
         </form>
       </div>
@@ -139,7 +139,9 @@ export default {
           nutritionFacts: 'Nutrition Facts',
           dailyValues: 'Daily Value',
           servingSize: 'Serving Size',
+          servingSizeSecondaryLanguage: 'Portion',
           servingsPerContainer: 'Servings Per Container',
+          servingsPerContainerSecondaryLanguage: 'Portions par contenant',
           amountPerServing: 'Amount Per Serving',
           calories: 'Calories',
           caffeine: 'Caffeine',
@@ -155,6 +157,7 @@ export default {
           totalCarb: 'Total Carbohydrates',
           fiber: 'Dietary Fiber',
           sugars: 'Sugars',
+          sugarAlcohol: 'Sugar Alcohol',
           protein: 'Protein',
           vitaminA: 'Vitamin A',
           vitaminC: 'Vitamin C',
@@ -166,7 +169,8 @@ export default {
           ingredients: 'Ingredients',
           disclaimer: 'Disclaimer',
           viewAllIngredients: 'View All Ingredients',
-          multipleItems: 'Multiple Items'
+          multipleItems: 'Multiple Items',
+          textDailyValueFootnote: '* 5% or less is <strong>a little</strong>, 15% or more is <strong>a lot</strong>'
         },
         addedSugars: {
           show: 1,
@@ -327,7 +331,7 @@ export default {
       let options = JSON.parse(JSON.stringify(this.options));
       options.width = 300;
       options.layout = 'CA';
-      options.locale.nutritionFacts = 'Nutrition';
+      options.locale.nutritionFacts = 'Nutrition Facts <br /> Valeur Nutritive';
       return options;
     },
     n () {
