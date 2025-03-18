@@ -176,27 +176,30 @@ export default {
 </script>
 <style lang='scss'>
 @font-face {
-  font-family: "Helvetica";
-  font-style: normal;
-  font-weight: normal;
-  src: local("Helvetica"),
-    url("../assets/fonts/helvetica/Helvetica.woff") format("woff");
+    font-family: 'Helvetica';
+    src: url('~@/assets/fonts/helvetica/Helvetica.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
 }
+
 @font-face {
-  font-family: "Helvetica Bold";
-  font-style: normal;
-  font-weight: normal;
-  src: local("Helvetica Bold"),
-    url("../assets/fonts/helvetica/Helvetica-Bold.woff") format("woff");
+    font-family: 'Helvetica-Bold';
+    src: url('~@/assets/fonts/helvetica/Helvetica-Bold.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
 }
+
 .nf.ca {
+  font-family: 'Helvetica';
   font-size: 13px;
   .nf-header-wrap {
     border-bottom: 2px solid #000;
     margin-bottom: 3px;
   }
   .nf-title {
-    font-family: "Helvetica Bold";
+    font-family: 'Helvetica-Bold';
     font-size: 19px;
     margin: 0;
   }
@@ -212,7 +215,7 @@ export default {
     margin-left: 16px;
   }
   .nf-highlight {
-    font-family: "Helvetica Bold";
+    font-family: 'Helvetica-Bold';
     font-size: 13px;
   }
   .nf-calories {
