@@ -114,7 +114,6 @@
       </span>
     </div>
     <div class="nf-line" v-if="cholesterol.show">
-      <span v-if="cholesterol.showDv" class="nf-pr" aria-hidden="true">{{ cholesterol.dv }}%</span>
       <span class="nf-highlight" v-html="text.cholesterol || 'Cholesterol / Cholestérol'"></span>
       <span itemprop="cholesterolContent">
         {{ cholesterol.value }}<span aria-hidden="true"> mg</span><span class="sr-only"> milligrams</span>
@@ -142,16 +141,6 @@
       <span v-html="text.iron || 'Iron / Fer'"></span> {{ roundToSpecificDecimalPlace(iron.value, 1) }}<span aria-hidden="true"> mg</span>
       <span class="sr-only"> milligrams</span>
       <span v-if="iron.showDv" class="nf-pr" aria-hidden="true">{{ iron.dv }} %</span>
-    </div>
-    <div class="nf-line" v-if="vitaminA.show">
-      <span v-html="text.vitaminA || 'Vitamin A / Vitamine A'"></span> {{ vitaminA.value }}<span aria-hidden="true"> IU</span>
-      <span class="sr-only"> International Unit</span>
-      <span class="nf-pr" aria-hidden="true">{{ vitaminA.dv }} %</span>
-    </div>
-    <div class="nf-line" v-if="vitaminC.show">
-      <span v-html="text.vitaminC || 'Vitamin C / Vitamine C'"></span> {{ vitaminC.value }}<span aria-hidden="true"> mg</span>
-      <span class="sr-only"> milligrams</span>
-      <span class="nf-pr" aria-hidden="true">{{ vitaminC.dv }} %</span>
     </div>
     <div class="nf-line" v-if="vitaminD.show">
       <span v-html="text.vitaminD || 'Vitamin D / Vitamine D'"></span> {{ roundToSpecificDecimalPlace(vitaminD.value, 1) }}<span aria-hidden="true"> mcg</span>
