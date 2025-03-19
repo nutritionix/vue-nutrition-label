@@ -332,6 +332,7 @@ export default {
       options.width = 300;
       options.layout = 'CA';
       options.locale.nutritionFacts = 'Nutrition Facts <br /> Valeur Nutritive';
+      options.locale.dailyValues = 'Daily Value *\u003Cbr\u003EValeur quotidienne';
       return options;
     },
     n () {
