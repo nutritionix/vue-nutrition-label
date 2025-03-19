@@ -45,7 +45,7 @@
         <span itemprop="calories">{{ calories.value }}</span>
       </div>
       <div class="nf-highlight nf-percent-dv nf-text-right">
-        <div>% <span v-html="text.dailyValues3 || 'Daily Value* <br>% valeur quotidienne'"></span>*</div>
+        <div>% <span v-html="text.dailyValues || 'Daily Value* <br>% valeur quotidienne'"></span>*</div>
       </div>
     </div>
     <div class="nf-no-line" v-if="totalFat.show">
