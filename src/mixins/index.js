@@ -1032,6 +1032,6 @@ export const main = {
   },
 
   updated () {
-    this.$emit('getServingQuantity', this.serving.value);
+    this.$emit('getServing', this.serving);
   }
 };
