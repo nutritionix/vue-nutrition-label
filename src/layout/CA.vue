@@ -45,8 +45,7 @@
         <span itemprop="calories">{{ calories.value }}</span>
       </div>
       <div class="nf-highlight nf-percent-dv nf-text-right">
-        <div>% {{ text.dailyValues }}*</div>
-        <div>% valeur quotidienne*</div>
+        <div>% <span v-html="text.dailyValues3 || 'Daily Value* <br>% valeur quotidienne'"></span>*</div>
       </div>
     </div>
     <div class="nf-no-line" v-if="totalFat.show">
@@ -183,6 +182,7 @@ export default {
 .nf.ca {
   font-family: 'Helvetica';
   font-size: 13px;
+  line-height: 15px;
   .nf-header-wrap {
     border-bottom: 2px solid #000;
     margin-bottom: 3px;
