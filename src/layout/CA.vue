@@ -5,7 +5,7 @@
       </div>
       <div class="nf-servings-wrap">
         <template v-if="servingPerContainer >= 1">
-          <div>
+          <div class="nf-serving-text1">
             {{ text.servingSize || 'Serving Size' }} {{ serving.value }} {{ servingUnitName }}
             <template v-if="settings.showServingWeight">
               ({{ servingWeight }}{{setServingUnit}})
@@ -16,10 +16,10 @@
               ({{ servingWeight }}{{setServingUnit}})
             </template>
           </div>
-          <div>
+          <div class="nf-serving-text2">
             {{ text.servingsPerContainer || 'Serving Per Container' }} {{ servingPerContainer }}
           </div>
-          <div>
+          <div class="nf-serving-text3">
             {{ text.servingsPerContainerSecondaryLanguage || 'Portions par contenant' }} {{ servingPerContainer }}
           </div>
         </template>
@@ -197,15 +197,13 @@ export default {
     font-size: 14px;
     line-height: 15px;
     padding-bottom: 2px;
-
-    div {
-      &:nth-child(1) {
-        line-height: 15px;
-      }
-      &:nth-child(2), &:nth-child(3) {
-        line-height: 13px;
-      }
-    }
+  }
+  .nf-serving-text1,
+  .nf-serving-text2 {
+    line-height: 15px;
+  }
+  .nf-serving-text3 {
+    line-height: 13px;
   }
   .nf-indent {
     padding-left: 8px;
