@@ -31,7 +31,7 @@
             </template>
           </div>
           <div>
-            {{ text.servingsPerContainerSecondaryLanguage || 'Pour' }} {{ serving.value }} {{ servingUnitNameTranslation }}
+            {{ text.servingSizeSecondaryLanguage || 'Pour' }} {{ serving.value }} {{ servingUnitNameTranslation }}
             <template v-if="settings.showServingWeight">
               ({{ servingWeight }}{{setServingUnit}})
             </template>
