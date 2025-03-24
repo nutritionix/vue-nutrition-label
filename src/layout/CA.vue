@@ -5,7 +5,7 @@
       </div>
       <div class="nf-servings-wrap">
         <template v-if="servingPerContainer >= 1">
-          <div>
+          <div class="nf-serving-text1">
             {{ text.servingSize || 'Serving Size' }} {{ serving.value }} {{ servingUnitName }}
             <template v-if="settings.showServingWeight">
               ({{ servingWeight }}{{setServingUnit}})
@@ -16,10 +16,10 @@
               ({{ servingWeight }}{{setServingUnit}})
             </template>
           </div>
-          <div>
+          <div class="nf-serving-text2">
             {{ text.servingsPerContainer || 'Serving Per Container' }} {{ servingPerContainer }}
           </div>
-          <div>
+          <div class="nf-serving-text3">
             {{ text.servingsPerContainerSecondaryLanguage || 'Portions par contenant' }} {{ servingPerContainer }}
           </div>
         </template>
@@ -149,7 +149,7 @@
     <div class="nf-bar1"></div>
     <div class="nf-footer">
       <div v-html="text.textDailyValueFootnote || ''"></div>
-      <div>
+      <div class="nf-ingredients-statement">
           <strong v-html="(text.ingredients || 'INGREDIENTS') + ':'"></strong>
           <div v-html="ingredientStatement"></div>
       </div>
@@ -190,12 +190,20 @@ export default {
   .nf-title {
     font-family: 'Helvetica-Bold';
     font-size: 19px;
+    line-height: 19px;
     margin: 0;
   }
   .nf-servings-wrap {
     font-size: 14px;
-    line-height: 14px;
+    line-height: 15px;
     padding-bottom: 2px;
+  }
+  .nf-serving-text1,
+  .nf-serving-text2 {
+    line-height: 15px;
+  }
+  .nf-serving-text3 {
+    line-height: 13px;
   }
   .nf-indent {
     padding-left: 8px;
@@ -218,6 +226,9 @@ export default {
     float: right;
     font-size: 9px;
     line-height: 9px;
+    div {
+      line-height: 9px;
+    }
   }
   .nf-no-line {
     padding-bottom: 2px;
@@ -230,6 +241,14 @@ export default {
     font-size: 10px;
     line-height: 11px;
     margin-bottom: -2px;
+    div {
+      &:nth-child(1) {
+        line-height: 17px;
+      }
+      &:nth-child(2) {
+        line-height: 10px;
+      }
+    }
   }
   .nf-bar1 + .nf-line {
     border: none;
