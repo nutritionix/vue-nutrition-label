@@ -782,8 +782,8 @@ export const main = {
     useGramAndNotMlOnTheUkLabel () {
       return this.value.hasOwnProperty('useGramAndNotMlOnTheUkLabel') ? this.value.useGramAndNotMlOnTheUkLabel : 0;
     },
-    useMlOnUkLabel () {
-      return this.value.hasOwnProperty('useMlOnUkLabel') ? this.value.useMlOnUkLabel : 0;
+    useMilliliter () {
+      return this.value.hasOwnProperty('useMilliliter') ? this.value.useMilliliter : 0;
     },
     calories () {
       let n = 'calories';
@@ -965,6 +965,11 @@ export const main = {
     calcium () {
       let n = 'calcium';
 
+      // overrride calcium setting using calciumMgFor2018 for Canada label
+      if (this.isCanada) {
+        this.options.calcium.show = this.options.calciumMgFor2018.show;
+      }
+
       return {
         value: this.unitValue(n),
         dv: this.percentDailyValue(n),
@@ -974,6 +979,11 @@ export const main = {
     },
     iron () {
       let n = 'iron';
+
+      // override iron setting using ironMgFor2018 for Canada label
+      if (this.isCanada) {
+        this.options.iron.show = this.options.ironMgFor2018.show;
+      }
 
       return {
         value: this.unitValue(n),
@@ -1021,7 +1031,7 @@ export const main = {
       return this.servingWeight <= 0;
     },
     setServingUnit () {
-      return this.useMlOnUkLabel ? 'ml' : 'g';
+      return this.useMilliliter ? 'ml' : 'g';
     },
     isUK () {
       return this.settings.layout.toLowerCase() === 'uk';
