@@ -8,7 +8,7 @@
         <form>
           <p>
             <label>Use ml on UK &amp; Canada</label>
-            <input type="checkbox" v-model="item.useMlOnUkLabel">
+            <input type="checkbox" v-model="item.useMilliliter">
           </p>
           <p>
             <label>Serving Per Container</label>

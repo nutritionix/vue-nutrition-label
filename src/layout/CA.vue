@@ -95,7 +95,7 @@
         </span>
       </div>
       <div class="nf-no-line nf-indent" v-if="sugars.show">
-        <span class="nf-pr" aria-hidden="true">{{ sugars.dv }} %</span>
+        <span v-if="sugars.showDv" class="nf-pr" aria-hidden="true">{{ sugars.dv }} %</span>
         <span v-html="text.sugars || 'Sugars / Sucres'"></span>
         <span itemprop="sugarContent">
           {{ sugars.value }}<span aria-hidden="true"> g</span><span class="sr-only"> grams</span>
