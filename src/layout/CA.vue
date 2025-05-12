@@ -10,10 +10,12 @@
             <template v-if="settings.showServingWeight">
               ({{ servingWeight }}{{setServingUnit}})
             </template>
-            /
-            {{ text.servingSizeSecondaryLanguage || 'Portion' }} {{ serving.value }} {{ servingUnitNameTranslation }}
-            <template v-if="settings.showServingWeight">
-              ({{ servingWeight }}{{setServingUnit}})
+            <template v-if="servingUnitNameTranslation">
+              /
+              {{ text.servingSizeSecondaryLanguage || 'Portion' }} {{ serving.value }} {{ servingUnitNameTranslation }}
+              <template v-if="settings.showServingWeight">
+                ({{ servingWeight }}{{setServingUnit}})
+              </template>
             </template>
           </div>
           <div class="nf-serving-text2">
@@ -30,7 +32,7 @@
               ({{ servingWeight }}{{setServingUnit}})
             </template>
           </div>
-          <div>
+          <div v-if="servingUnitNameTranslation">
             {{ text.servingSizeSecondaryLanguage || 'Pour' }} {{ serving.value }} {{ servingUnitNameTranslation }}
             <template v-if="settings.showServingWeight">
               ({{ servingWeight }}{{setServingUnit}})
