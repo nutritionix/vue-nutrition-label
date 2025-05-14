@@ -1,3 +1,6 @@
+# 1.7.1 - 2025-05-14
+- Show primary serving size when Servings Per Container = 0 and no translation exists
+
 # 1.7.0 - 2025-04-09
 - Added support for Canada Nutrition Label
 - Updated shelljs to 0.8.4
